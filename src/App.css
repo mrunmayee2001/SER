@@ -1,0 +1,342 @@
+.App {
+  height: 100%;
+  width: 100%;
+  background-color: #152238;
+  color: white;
+  font-family: 'Lucida Sans';
+  padding: 0%;
+  position:fixed;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 10px;
+}
+ 
+::-webkit-scrollbar-thumb {
+  background: #BCD2E8; 
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: white; 
+}
+
+.Header {
+  display: grid;
+  grid-template-columns: 5% 95%;
+  height: 10vh;
+  background-color: #1c2e4a;
+  align-items: center;
+}
+
+.Header .mpp-logo {
+  height: 8vh;
+  width: 8vh;
+  align-items: center;
+  justify-self: center;
+}
+
+.Header .page-title {
+  position: relative;
+  font-size: 5vh;
+  color: white;
+  margin-left: 10px;
+}
+
+.main-container {
+  display: grid;
+  grid-template-columns: 5% 95%;
+  height: 90vh;
+  padding: 0;
+}
+
+.Sidebar {
+  height: 90vh;
+  background-color: #1c2e4a;
+}
+
+.sidebar-logo {
+  height: 28px;
+  width: 28px;
+}
+
+.sidebar-list {
+  height: 90vh;
+  width: 100%;
+  padding: 0%;
+}
+
+.sidebar-list .row {
+  width: 100%;
+  height: 80px;
+  list-style: none;
+  margin: 0%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sidebar-list .row:hover {
+  background-color: #23395d;
+}
+
+.sidebar-list #active {
+  background-color: #23395d;
+}
+
+.main-page{
+  height: 90vh;
+}
+
+.Dashboard {
+  height: 80vh;
+  padding: 5vh;
+  background-color: #152238;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 20px;
+}
+
+.Dashboard .Emotion-graph {
+  grid-column: 1/ span 1;
+  grid-row: 1/ span 1;
+  background-color: #1c2e4a;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.Dashboard .Emergency-graph {
+  grid-column: 1/ span 1;
+  grid-row: 2/ span 1;
+  background-color: #1c2e4a;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.Dashboard .Recent-Emergency {
+  grid-column: 2/ span 1;
+  grid-row: 1/ span 2;
+  background-color: #1c2e4a;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow-y: auto;
+}
+
+.Dashboard .Recent-Calls {
+  grid-column: 3/ span 1;
+  grid-row: 1/ span 2;
+  background-color: #1c2e4a;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow-y: auto;
+}
+
+.Live-Call {
+  height: 80vh;
+  padding: 5vh;
+  background-color: #152238;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+.Live-Call .Person {
+  grid-column: 1/ span 3;
+  grid-row: 1/ span 2;
+  border: 1px solid #1c2e4a;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  align-items: center;
+}
+
+.Live-Call .Person .Photo{
+  grid-column: 1/ span 1 ;
+  height: 25vh;
+  width: 25vh;
+  border-radius: 50%;
+  object-fit: cover;
+  align-self: center;
+  justify-self: center;
+}
+
+.Live-Call .Person .Info{
+  grid-column: 2/ span 1 ;
+  text-align: left;
+  justify-items: center;
+}
+
+.Live-Call .Person .Info .Name {
+  size: 6vh;
+}
+
+.Live-Call .Person .Info .Call-Status {
+  margin-top: 2vh;
+  padding: 5px 15px 5px 15px;
+  background-color: #23395d;
+  border-radius: 10px;
+  width: min-content;
+}
+
+.Live-Call .Emotions {
+  grid-column: 4/ span 2;
+  grid-row: 1/ span 2;
+  background-color: #1c2e4a;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.Live-Call .Personal-Info {
+  grid-column: 1/ span 2;
+  grid-row: 3/ span 2;
+  background-color: #1c2e4a;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.Live-Call .Location {
+  grid-column: 3/ span 3;
+  grid-row: 3/ span 3;
+  background-color: #1c2e4a;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.Live-Call .Rescue-Team {
+  grid-column: 1/ span 2;
+  grid-row: 5/ span 1;
+  background-color: #461e33;
+  border: #ff0022 2px solid;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  align-items: center;
+}
+
+.Live-Call .Rescue-Team .Rescue-Logo{
+  height: 7vh;
+  width: 7vh;
+  grid-column: 1/ span 1;
+  align-self: center;
+  justify-self: center;
+}
+
+.Live-Call .Rescue-Team .Rescue-Msg{
+  grid-column: 2/ span 1;
+  text-align: left;
+}
+
+.Call-Logs {
+  height: 80vh;
+  padding: 5vh;
+  background-color: #152238;
+}
+
+.Call-Logs .Nav-Bar {
+  width: 100%;
+  height: 7vh;
+  background-color: #1c2e4a;
+  border-radius: 15px;
+  text-align: center;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+
+}
+
+.Call-Logs .Logs-List{
+  height: 70vh;
+  margin-top: 4vh;
+  display: grid;
+  overflow-y: auto;
+}
+
+.Call-Logs .Logs-List .Log{
+  height: 7vh;
+  display: grid;
+  grid-template-columns: 1fr 3fr 2fr 3fr 3fr;
+  text-align: center;
+  border-bottom: 1px solid #BCD2E8;
+}
+
+.Maps {
+  height: 80vh;
+  padding: 5vh;
+  background-color: #152238;
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 20px;
+}
+
+.Maps .Map-Area {
+  grid-column: 1/ span 1;
+  background-color: #1c2e4a;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.Maps .Areawise-Rank {
+  grid-column: 2/ span 1;
+  background-color: #1c2e4a;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow-y: auto;
+}
+
+.tab-list {
+  padding-left: 0;
+  margin: 0;
+}
+
+.tab-list-item {
+  display: inline-block;
+  list-style: none;
+  margin-bottom: -1px;
+  width: 8rem;
+  padding: 0.5rem 1.5rem;
+}
+
+.tab-list-active {
+  background-color: #23395d;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.Map {
+  padding-top: 15px;
+  background-color: #23395d;
+}
