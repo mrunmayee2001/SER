@@ -1,138 +1,70 @@
-import React from 'react';
-//import db from '../Firebase';
-//import { doc, onSnapshot } from "firebase/firestore";
+import React, {useEffect, useState} from 'react';
+import db from '../Firebase';
+import { doc, onSnapshot, collection, query, where, getDocs } from "firebase/firestore";
 
-const logs =[
-    {
-        DateTime: "2022-06-27 02:06",
-        Name: "Mrunmayee",
-        Status: "ended",
-        Emotion: "Happy",
-        Report: "Here's my report"
-    },
-    {
-        DateTime: "2022-06-27 02:06",
-        Name: "Mrunmayee",
-        Status: "ended",
-        Emotion: "Happy",
-        Report: "Here's my report"
-    },
-    {
-        DateTime: "2022-06-27 02:06",
-        Name: "Mrunmayee",
-        Status: "ended",
-        Emotion: "Happy",
-        Report: "Here's my report"
-    },
-    {
-        DateTime: "2022-06-27 02:06",
-        Name: "Mrunmayee",
-        Status: "ended",
-        Emotion: "Happy",
-        Report: "Here's my report"
-    },
-    {
-        DateTime: "2022-06-27 02:06",
-        Name: "Mrunmayee",
-        Status: "ended",
-        Emotion: "Happy",
-        Report: "Here's my report"
-    },
-    {
-        DateTime: "2022-06-27 02:06",
-        Name: "Mrunmayee",
-        Status: "ended",
-        Emotion: "Happy",
-        Report: "Here's my report"
-    },
-    {
-        DateTime: "2022-06-27 02:06",
-        Name: "Mrunmayee",
-        Status: "ended",
-        Emotion: "Happy",
-        Report: "Here's my report"
-    },
-    {
-        DateTime: "2022-06-27 02:06",
-        Name: "Mrunmayee",
-        Status: "ended",
-        Emotion: "Happy",
-        Report: "Here's my report"
-    },
-    {
-        DateTime: "2022-06-27 02:06",
-        Name: "Mrunmayee",
-        Status: "ended",
-        Emotion: "Happy",
-        Report: "Here's my report"
-    },
-    {
-        DateTime: "2022-06-27 02:06",
-        Name: "Mrunmayee",
-        Status: "ended",
-        Emotion: "Happy",
-        Report: "Here's my report"
-    },
-    {
-        DateTime: "2022-06-27 02:06",
-        Name: "Mrunmayee",
-        Status: "ended",
-        Emotion: "Happy",
-        Report: "Here's my report"
-    },
-    {
-        DateTime: "2022-06-27 02:06",
-        Name: "Mrunmayee",
-        Status: "ended",
-        Emotion: "Happy",
-        Report: "Here's my report"
-    },
-    {
-        DateTime: "2022-06-27 02:06",
-        Name: "Mrunmayee",
-        Status: "ended",
-        Emotion: "Happy",
-        Report: "Here's my report"
-    },
-    {
-        DateTime: "2022-06-27 02:06",
-        Name: "Mrunmayee",
-        Status: "ended",
-        Emotion: "Happy",
-        Report: "Here's my report"
-    },
-    {
-        DateTime: "2022-06-27 02:06",
-        Name: "Mrunmayee",
-        Status: "ended",
-        Emotion: "Happy",
-        Report: "Here's my report"
-    },
-    {
-        DateTime: "2022-06-27 02:06",
-        Name: "Mrunmayee",
-        Status: "ended",
-        Emotion: "Happy",
-        Report: "Here's my report"
-    },
-    {
-        DateTime: "2022-06-27 02:06",
-        Name: "Mrunmayee",
-        Status: "ended",
-        Emotion: "Happy",
-        Report: "Here's my report"
-    },
-    {
-        DateTime: "2022-06-27 02:06",
-        Name: "Mrunmayee",
-        Status: "ended",
-        Emotion: "Happy",
-        Report: "Here's my report"
-    },
-]
+// const Logs =[
+//     {
+//         DateTime: "2022-06-27 02:06",
+//         Name: "Mrunmayee",
+//         Status: "ended",
+//         Emotion: "Happy",
+//         City: "Indore",
+//         Report: "Here's my report"
+//     },
+//     {
+//         DateTime: "2022-06-27 02:06",
+//         Name: "Mrunmayee",
+//         Status: "ended",
+//         Emotion: "Happy",
+//         City: "Indore",
+//         Report: "Here's my report"
+//     },
+//     {
+//         DateTime: "2022-06-27 02:06",
+//         Name: "Mrunmayee",
+//         Status: "ended",
+//         Emotion: "Happy",
+//         City: "Indore",
+//         Report: "Here's my report"
+//     },
+//     {
+//         DateTime: "2022-06-27 02:06",
+//         Name: "Mrunmayee",
+//         Status: "ended",
+//         Emotion: "Happy",
+//         City: "Indore",
+//         Report: "Here's my report"
+//     },
+//     {
+//         DateTime: "2022-06-27 02:06",
+//         Name: "Mrunmayee",
+//         Status: "ended",
+//         Emotion: "Happy",
+//         City: "Indore",
+//         Report: "Here's my report"
+//     },
+    
+// ]
 
 function CallLogs() {
-  return (
+    const [Logs, setCallLogs] = useState([]);
+    //const ref = db.collection("Call-Logs");
+    
+    useEffect(()=> {
+        const ref = collection(db, "Call-Logs");
+        function getLogs(){
+            query(getDocs(ref)).then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    // doc.data() is never undefined for query doc snapshots
+                    Logs.push(doc.data())
+                    console.log(doc.id, " => ", doc.data());
+                });
+            });
+        }
+        getLogs();
+    }, []);
+
+    return (
     <div className='Call-Logs'>
         <div className='Nav-Bar'>
             <div className='Searchbar'>Search</div>
@@ -140,23 +72,27 @@ function CallLogs() {
             <div className='City-Filter'>City Filter</div>
         </div>
         <ul className='Logs-List'>
-            {logs.map((val, key)=> {
+            {Logs.map((val)=> {
+                console.log(val.Duration)
                 return(
-                    <li key={key} className='Log' >
+                    <li className='Log' >
                         <div className='DateTime' >
-                            {val.DateTime}
+                            {val.City}
+                        </div>
+                        <div className='City' >
+                            {val.City}
                         </div>
                         <div className='Person-Name' >
-                            {val.Name}
+                            Mrun
                         </div>
                         <div className='Call-Status' >
-                            {val.Status}
+                            {val.Duration}
                         </div>
                         <div className='Emotion' >
                             {val.Emotion}
                         </div>
                         <div className='Report' >
-                            {val.Report}
+                            Report
                         </div>
                     </li>
                 )

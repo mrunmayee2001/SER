@@ -8,7 +8,7 @@ function Maps() {
         <Tabs>
           <div label="Ambulance">
             <div className='Map'>
-              
+              Here is Ambulance map
             </div>
           </div>
           <div label="Fire">
