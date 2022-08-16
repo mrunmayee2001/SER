@@ -1,6 +1,7 @@
 import React from 'react';
 import PersonPhoto from '../Assets/Ira.jpg';
 import RescueLogo from '../Assets/rescue-team.png';
+import LocationMap  from './LocationMap.js';
 
 function LiveCall() {
   return (
@@ -17,7 +18,7 @@ function LiveCall() {
       </div>
       <div className='Emotions'>Emotions Stats</div>
       <div className='Personal-Info'>Personal Info</div>
-      <div className='Location'>Location</div>
+      <div className='Location'>TWilio Live Location</div>
       <div className='Rescue-Team'>
         <img src={RescueLogo} alt="Photo"  className='Rescue-Logo'/>
         <div className='Rescue-Msg'>Dispatch Rescue Team to the Location immediately</div>

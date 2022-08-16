@@ -1,5 +1,6 @@
 import React from 'react'
 import Tabs from './Tabs'
+import LocationMap from './LocationMap'
 
 function Maps() {
   return (
@@ -8,14 +9,14 @@ function Maps() {
         <Tabs>
           <div label="Ambulance">
             <div className='Map'>
-              Here is Ambulance map
+              <LocationMap />
             </div>
           </div>
           <div label="Fire">
-            <div className='Map'>Here is Fire map</div>
+            <div className='Map'><LocationMap /></div>
           </div>
           <div label="Police">
-            <div className='Map'>Here is Police map</div> 
+            <div className='Map'><LocationMap /></div> 
           </div>
         </Tabs>
       </div>

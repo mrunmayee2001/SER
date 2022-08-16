@@ -8,6 +8,7 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
+import {Row, Col} from 'react-bootstrap';
 
 // const Logs =[
 //     {
@@ -53,8 +54,8 @@ import {
 
 // ]
 
-function CallLogs() {
-  const [Logs, setCallLogs] = useState([]);
+function ServiceCard() {
+  const [service, setService] = useState([]);
   //const ref = db.collection("Call-Logs");
 
   useEffect(() => {
@@ -78,7 +79,7 @@ function CallLogs() {
       data.forEach((doc) => {
         info.push(doc.data());
       });
-      setCallLogs(info);
+      setService(info);
     }
     fetchInfo();
     console.log("hi");
@@ -86,23 +87,22 @@ function CallLogs() {
 
   return (
     <div className="Call-Logs">
-      <div className="Nav-Bar">
-        <div className="Searchbar">Search</div>
-        <div className="Emotion-Filter">Emotion Filter</div>
-        <div className="City-Filter">City Filter</div>
-      </div>
       <ul className="Logs-List">
-        {console.log(Logs)}
-        {Logs.map((val) => {
+        {console.log(service)}
+        {service.map((val) => {
           return (
-            <li className="Log">
-              <div className="DateTime">{val.City}</div>
-              <div className="City">{val.City}</div>
-              <div className="Person-Name">Mrun</div>
-              <div className="Call-Status">{val.Duration}</div>
-              <div className="Emotion">{val.Emotion}</div>
-              <div className="Report">Report</div>
-            </li>
+            <div>
+            <Row>
+            <Col md={2}>
+              
+            </Col>
+            <Col md={6}>
+
+            </Col>
+            <h1>{val.Service}</h1>
+            </Row>
+            </div>
+            
           );
         })}
       </ul>
@@ -110,4 +110,4 @@ function CallLogs() {
   );
 }
 
-export default CallLogs;
+export default ServiceCard;

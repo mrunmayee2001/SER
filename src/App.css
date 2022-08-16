@@ -289,7 +289,7 @@
 }
 
 .Maps {
-  height: 80vh;
+  height: 70vh;
   padding: 5vh;
   background-color: #152238;
   display: grid;
@@ -339,3 +339,4 @@
   padding-top: 15px;
   background-color: #23395d;
 }
+
