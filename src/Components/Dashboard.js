@@ -1,13 +1,14 @@
 import React from 'react'
-import ServiceCard from './ServiceCard';
+import RecentEmergencies from './RecentEmergencies'
+import EmotionGraph from './EmotionGraph'
+import EmergencyGraph from './EmergencyGraph'
 
 function Dashboard() {
   return (
     <div className='Dashboard'>
-      <div className='Emotion-graph'>Emotion graph</div>
-      <div className='Recent-Emergency'><ServiceCard /></div>
-      <div className='Recent-Calls'>Recent Calls</div>
-      <div className='Emergency-graph'>Emergency graph</div>
+      <div className='Emotion-graph'><EmotionGraph/></div>
+      <div className='Recent-Emergency'><RecentEmergencies/></div>
+      <div className='Emergency-graph'><EmergencyGraph/></div>
     </div>
   )
 }

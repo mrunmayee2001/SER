@@ -3,8 +3,7 @@ import { useMemo } from "react";
 import { GoogleMap, useLoadScript, MarkerF, HeatmapLayer } from "@react-google-maps/api";
 
 
-
-const LocationMap = () =>{
+function LocationMap() {
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
         // libraries : ['visualization']

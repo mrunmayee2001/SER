@@ -8,9 +8,7 @@ function Maps() {
       <div className='Map-Area'>
         <Tabs>
           <div label="Ambulance">
-            <div className='Map'>
-              <LocationMap />
-            </div>
+            <div className='Map'><LocationMap /></div>
           </div>
           <div label="Fire">
             <div className='Map'><LocationMap /></div>

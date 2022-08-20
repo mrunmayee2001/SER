@@ -102,7 +102,7 @@
   padding: 5vh;
   background-color: #152238;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr ;
   grid-template-rows: 1fr 1fr;
   gap: 20px;
 }
@@ -138,15 +138,53 @@
   overflow-y: auto;
 }
 
-.Dashboard .Recent-Calls {
-  grid-column: 3/ span 1;
-  grid-row: 1/ span 2;
-  background-color: #1c2e4a;
-  border-radius: 15px;
-  align-items: center;
+.Dashboard .Emergencies {
+  padding: 0;
+  margin: 10px;
+}
+
+.ServiceContainer{
+  display: grid;
+  grid-template-columns: 1fr 4fr  ;
+  border-radius: 10px;
   justify-content: center;
-  text-align: center;
-  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  background-color: #152238;
+  margin-bottom: 2vh;
+}
+
+.ServiceContainer .Logo{
+  width:max-content;
+  grid-column: 1/ span 1;
+  border-radius: 50%;
+  margin: 1vh;
+  padding: 1vh;
+  justify-self: center;
+  border-radius: 50%;
+}
+
+.ServiceContainer .ServiceDesc{
+  grid-column: 2/ span 1 ;
+  align-self: center;
+  justify-self: start;
+  text-align: left;
+  font-size: 14px;
+}
+
+.ServiceContainer .ServiceDesc .p{
+  margin: 0;
+  padding: 0;
+  
+}
+
+.ServiceContainer .Logo .ServicePhoto{
+  height: 5vh;
+  width: 5vh;
+  border-radius: 50%;
+  object-fit: cover;
+  align-self: center;
+  justify-self: center;
 }
 
 .Live-Call {
@@ -269,8 +307,9 @@
   background-color: #1c2e4a;
   border-radius: 15px;
   text-align: center;
+  flex: auto;
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns:  2fr 1fr 1.5fr 1fr 1fr 1fr;
 
 }
 
@@ -278,14 +317,15 @@
   height: 70vh;
   display: grid;
   overflow-y: auto;
+  padding: 0;
 }
 
 .Call-Logs .Logs-List .Log{
   height: 7vh;
   display: grid;
-  grid-template-columns: 1fr 1fr 2fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1.5fr 1fr 1fr 1fr;
   text-align: center;
-  border-bottom: 1px solid #BCD2E8;
+  border-bottom: 1px solid #23395d;
 }
 
 .Maps {
@@ -336,7 +376,7 @@
 }
 
 .Map {
-  padding-top: 15px;
+  padding: 10px;
   background-color: #23395d;
 }
 
