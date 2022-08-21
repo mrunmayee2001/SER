@@ -54,7 +54,16 @@ function EmergencyGraph() {
         backgroundColor: "rgba(247,252, 4, 0.1)",
         borderColor: "rgb(247,252, 4)"
       }
-    ]
+    ],
+  }
+  const options= {
+    scales: {
+        y: {
+            min: 0,
+            max: 100,
+            // suggestedMax:100,
+        }
+    }
   };
   Logs.map((val) => {
     if(moment(val.DateTime.toDate()).diff(this, 'hours')>-24 && moment(val.DateTime.toDate()).format("HH")<=moment().format("HH")){
@@ -68,12 +77,13 @@ function EmergencyGraph() {
       else if(val.Service == "Ambulance"){
         data['datasets'][2]['data'][timeperiod]++;
       }
+    console.log(val.Name);
     }
   })
 
   return (
     <div className="EmergencyGraph" >
-      <Line data={data} height="120px"/>
+      <Line data={data} height="120px" options={options}/>
     </div>
   );
 }

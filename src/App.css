@@ -190,7 +190,7 @@
 .Live-Call {
   height: 80vh;
   padding: 5vh;
-  background-color: #152238;
+  background-color: #000E5A;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
@@ -198,9 +198,21 @@
 }
 
 .Live-Call .Person {
+  grid-column: 1/ span 2;
+  grid-row: 1/ span 4;
+  border: 1px solid #1E2D7D;
+  border-radius: 15px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  display: grid;
+  grid-template-columns: 1fr ;
+  align-items: center;
+}
+.Live-Call .options {
   grid-column: 1/ span 3;
   grid-row: 1/ span 2;
-  border: 1px solid #1c2e4a;
+  border: 1px solid #1E2D7D;
   border-radius: 15px;
   align-items: center;
   justify-content: center;
@@ -212,8 +224,8 @@
 
 .Live-Call .Person .Photo{
   grid-column: 1/ span 1 ;
-  height: 25vh;
-  width: 25vh;
+  height: 20vh;
+  width: 20vh;
   border-radius: 50%;
   object-fit: cover;
   align-self: center;
@@ -221,8 +233,10 @@
 }
 
 .Live-Call .Person .Info{
-  grid-column: 2/ span 1 ;
-  text-align: left;
+  grid-column: 1/ span 2 ;
+  grid-row: 2/span 2;
+  text-align: center;
+  margin-top: -50px;
   justify-items: center;
 }
 
@@ -235,50 +249,91 @@
   padding: 5px 15px 5px 15px;
   background-color: #23395d;
   border-radius: 10px;
+  align-self: center;
   width: min-content;
 }
+.Live-Call .Emotions2 {
+  grid-column: 3/ span 2;
+  grid-row: 1/ span 3;
+ 
+  border-radius: 15px;
+  align-items: center;
+  justify-content: center;
+  grid-template-rows: 1fr 1fr;
+  text-align: center;
+}
 
+.Live-Call .Emotions2 .Details2 {
+  grid-row: 1/span 1;
+  
+  padding: 40px;
+  border-radius: 15px;
+  font-weight: bold ;
+  font-size: 24px;
+ 
+
+}
+.Live-Call .Emotions2 .Details3 {
+  grid-row: 2/span 1;
+  background-color:  #1E2D7D;
+  border-radius: 15px;
+  text-align: center;
+  margin-left: 30px;
+  margin-right: 30px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  font-size: 20px;
+
+
+
+}
 .Live-Call .Emotions {
-  grid-column: 4/ span 2;
-  grid-row: 1/ span 2;
-  background-color: #1c2e4a;
+  grid-column: 5/ span 1;
+  grid-row: 1/ span 3;
+  background-color: #1E2D7D;
   border-radius: 15px;
   align-items: center;
   justify-content: center;
   text-align: center;
 }
 
-.Live-Call .Personal-Info {
-  grid-column: 1/ span 2;
-  grid-row: 3/ span 2;
-  background-color: #1c2e4a;
-  border-radius: 15px;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
+
+
 
 .Live-Call .Location {
   grid-column: 3/ span 3;
-  grid-row: 3/ span 3;
-  background-color: #1c2e4a;
+  grid-row: 4/ span 2;
+  height: 20px;
+  background-color: #1E2D7D;
   border-radius: 15px;
-  align-items: center;
+  align-items: top;
   justify-content: center;
   text-align: center;
 }
-
-.Live-Call .Rescue-Team {
+.Live-Call .dispatch{
   grid-column: 1/ span 2;
   grid-row: 5/ span 1;
+
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  column-gap: 5px;
+  align-items: center;
+}
+.Live-Call .dispatch .Rescue-Team {
+  grid-column: 1/ span 1;
+  grid-row: 1/ span 1;
   background-color: #461e33;
+  height: 100%;
   border: #ff0022 2px solid;
   border-radius: 15px;
   align-items: center;
   justify-content: center;
   text-align: center;
   display: grid;
-  grid-template-columns: 1fr 4fr;
+  grid-template-columns: 1fr;
   align-items: center;
 }
 
@@ -290,10 +345,53 @@
   justify-self: center;
 }
 
-.Live-Call .Rescue-Team .Rescue-Msg{
-  grid-column: 2/ span 1;
-  text-align: left;
+.Live-Call .dispatch .Police-Team {
+  grid-column: 3/span 1;
+  grid-row: 1/ span 1;
+  background-color:rgba(255, 122, 0, 0.58);
+  border: #FF7A00 2px solid;
+  border-radius: 15px;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  display: grid;
+
+  align-items: center;
 }
+
+.Live-Call .Police-Team .Rescue-Logo{
+  height: 7vh;
+  width: 7vh;
+
+  align-self: center;
+  justify-self: center;
+}
+
+.Live-Call .dispatch .Ambulance-Team {
+  grid-column:2/span 1;
+  grid-row: 1/ span 1;
+  background-color:  rgba(201, 145, 0, 0.58);
+  border: #FABC3C 2px solid;
+  border-radius: 15px;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  display: grid;
+  
+  align-items: center;
+}
+
+.Live-Call .Ambulance-Team .Rescue-Logo{
+  height: 7vh;
+  width: 7vh;
+
+  align-self: center;
+  justify-self: center;
+}
+
+
 
 .Call-Logs {
   height: 80vh;
@@ -329,16 +427,14 @@
 }
 
 .Maps {
-  height: 70vh;
+  height: 65vh;
   padding: 5vh;
   background-color: #152238;
-  display: grid;
-  grid-template-columns: 3fr 1fr;
+  
   gap: 20px;
 }
 
 .Maps .Map-Area {
-  grid-column: 1/ span 1;
   background-color: #1c2e4a;
   border-radius: 15px;
   align-items: center;
@@ -346,10 +442,22 @@
   text-align: center;
 }
 
-.Maps .Areawise-Rank {
-  grid-column: 2/ span 1;
-  background-color: #1c2e4a;
+.tab-content {  
+  display: grid;
+  grid-template-columns: 3fr 1fr;
   border-radius: 15px;
+}
+
+.Map {
+  padding: 10px;
+  background-color: #23395d;
+}
+
+.Map-Area .Areawise-Rank {
+  height: 75vh;
+  grid-column: 2/ span 1;
+  background-color: #23395d;
+  padding-top: 20px;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -375,8 +483,33 @@
   border-top-right-radius: 10px;
 }
 
-.Map {
-  padding: 10px;
-  background-color: #23395d;
+.RankedCity {
+  height: 60px;
+  width: 92%;
+  background: #1c2e4a;
+  margin: 4%;
+  border-radius: 10px;
+  text-align: center;
+  justify-content: center;
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  grid-template-rows: 1fr;
 }
 
+.RankedCity .Cityname {
+  grid-column: 1/ span 1;
+  grid-row: 1/ span 1;
+  font-size: 25px;
+  align-self: center;
+  justify-self: left;
+  padding-left: 20px;
+}
+
+.RankedCity .Cases {
+  grid-column: 2/ span 1;
+  grid-row: 1/ span 1;
+  font-size: 30px;
+  align-self: center;
+  justify-self: right;
+  padding-right: 20px;
+}

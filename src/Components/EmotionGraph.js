@@ -64,7 +64,14 @@ function EmotionGraph() {
       }
     ]
   };
-  
+  const options= {
+    scales: {
+        y: {
+            min: 0,
+            max: 100
+        }
+    }
+  };
   Logs.map((val) => {
     if(moment(val.DateTime.toDate()).diff(this, 'hours')>-24 && moment(val.DateTime.toDate()).format("HH")<=moment().format("HH")){
       var timeperiod = Math.round(moment(val.DateTime.toDate()).format("HH")/4);
@@ -87,7 +94,7 @@ function EmotionGraph() {
   console.log(data['datasets'][0]['data'][3]);
   return (
     <div className="EmotionGraph" >
-      <Line data={data} height="120px"/>
+      <Line data={data} height="120px" options={options}/>
     </div>
   )
 }

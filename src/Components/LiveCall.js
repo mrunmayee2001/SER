@@ -1,7 +1,12 @@
 import React from 'react';
 import PersonPhoto from '../Assets/Ira.jpg';
+import fire from '../Assets/fire.png';
+import police from '../Assets/police.png';
+import ambulance from '../Assets/ambulance.png';
 import RescueLogo from '../Assets/rescue-team.png';
 import LocationMap  from './LocationMap.js';
+import Emotionpie from './Emotionpie';
+
 
 function LiveCall() {
   return (
@@ -9,19 +14,41 @@ function LiveCall() {
       <div className='Person'>
         <img src={PersonPhoto} alt="Photo"  className='Photo'/>
         <div className='Info'>
-          <div className='Name'><h2>PersonalData </h2></div>
+          <div className='Name'><h2>+91 98927821213 </h2></div>
           <div className='Details'>
-            Age: 21 | Id No.: 2315646541
+            Latitude:12'34567 | Longitude:14'23456
           </div>
-          <div className='Call-Status'> 51:27 </div>
+          <div className='Details2'>
+           Service Provider: Airtel
+          </div>
+          <div className='Details3'>
+           Past History: Abusive, Drunk
+          </div>
+
         </div>
       </div>
-      <div className='Emotions'>Emotions Stats</div>
-      <div className='Personal-Info'>Personal Info</div>
-      <div className='Location'>TWilio Live Location</div>
+      <div className='Emotions2'>
+        <div className='Details2'>
+        Current <br></br>Emotion
+        </div>
+        <div className='Details3'>
+        Angry
+        </div>
+      </div>
+      <div className='Emotions'><Emotionpie/></div>
+     
+      <div className='Location'><LocationMap /></div>
+      <div className='dispatch'>
       <div className='Rescue-Team'>
-        <img src={RescueLogo} alt="Photo"  className='Rescue-Logo'/>
-        <div className='Rescue-Msg'>Dispatch Rescue Team to the Location immediately</div>
+        <img src={fire} alt="Photo"  className='Rescue-Logo'/>
+      </div>
+      <div className='Ambulance-Team'>
+        <img src={ambulance} alt="Photo"  className='Rescue-Logo'/>
+      </div>
+      <div className='Police-Team'>
+        <img src={police} alt="Photo"  className='Rescue-Logo'/>
+      </div>
+    
       </div>
     </div>
   )
