@@ -7,7 +7,7 @@ import PieChart from "highcharts-react-official";
 
 const options = {
     chart: {
-      backgroundColor:"#1E2D7D" ,
+      backgroundColor:"#1C1B60" ,
       width: 400,
       height: 270,
       borderRadius: 15,

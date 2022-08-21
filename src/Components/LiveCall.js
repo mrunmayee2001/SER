@@ -1,5 +1,5 @@
 import React from 'react';
-import PersonPhoto from '../Assets/Ira.jpg';
+import PersonPhoto from '../Assets/DP.png';
 import fire from '../Assets/fire.png';
 import police from '../Assets/police.png';
 import ambulance from '../Assets/ambulance.png';

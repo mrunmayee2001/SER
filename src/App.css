@@ -1,7 +1,7 @@
 .App {
   height: 100%;
   width: 100%;
-  background-color: #152238;
+  background-color: #010048;
   color: white;
   font-family: 'Lucida Sans';
   padding: 0%;
@@ -34,7 +34,7 @@
   display: grid;
   grid-template-columns: 5% 95%;
   height: 10vh;
-  background-color: #1c2e4a;
+  background-color: #1C1B60;
   align-items: center;
 }
 
@@ -61,7 +61,7 @@
 
 .Sidebar {
   height: 90vh;
-  background-color: #1c2e4a;
+  background-color: #1C1B60;
 }
 
 .sidebar-logo {
@@ -86,11 +86,11 @@
 }
 
 .sidebar-list .row:hover {
-  background-color: #23395d;
+  background-color: #1F2C73;
 }
 
 .sidebar-list #active {
-  background-color: #23395d;
+  background-color: #1F2C73;
 }
 
 .main-page{
@@ -100,7 +100,7 @@
 .Dashboard {
   height: 80vh;
   padding: 5vh;
-  background-color: #152238;
+  background-color: #010048;
   display: grid;
   grid-template-columns: 1fr 1fr ;
   grid-template-rows: 1fr 1fr;
@@ -110,7 +110,7 @@
 .Dashboard .Emotion-graph {
   grid-column: 1/ span 1;
   grid-row: 1/ span 1;
-  background-color: #1c2e4a;
+  background-color: #1C1B60;
   border-radius: 15px;
   align-items: center;
   justify-content: center;
@@ -120,7 +120,7 @@
 .Dashboard .Emergency-graph {
   grid-column: 1/ span 1;
   grid-row: 2/ span 1;
-  background-color: #1c2e4a;
+  background-color: #1C1B60;
   border-radius: 15px;
   align-items: center;
   justify-content: center;
@@ -130,7 +130,7 @@
 .Dashboard .Recent-Emergency {
   grid-column: 2/ span 1;
   grid-row: 1/ span 2;
-  background-color: #1c2e4a;
+  background-color: #1C1B60;
   border-radius: 15px;
   align-items: center;
   justify-content: center;
@@ -150,7 +150,7 @@
   justify-content: center;
   margin: 0;
   padding: 0;
-  background-color: #152238;
+  background-color: #010048;
   margin-bottom: 2vh;
 }
 
@@ -190,7 +190,7 @@
 .Live-Call {
   height: 80vh;
   padding: 5vh;
-  background-color: #000E5A;
+  background-color: #010048;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
@@ -200,7 +200,7 @@
 .Live-Call .Person {
   grid-column: 1/ span 2;
   grid-row: 1/ span 4;
-  border: 1px solid #1E2D7D;
+  border: 1px solid #1C1B60;
   border-radius: 15px;
   align-items: center;
   justify-content: center;
@@ -212,7 +212,7 @@
 .Live-Call .options {
   grid-column: 1/ span 3;
   grid-row: 1/ span 2;
-  border: 1px solid #1E2D7D;
+  border: 1px solid #1C1B60;
   border-radius: 15px;
   align-items: center;
   justify-content: center;
@@ -247,7 +247,7 @@
 .Live-Call .Person .Info .Call-Status {
   margin-top: 2vh;
   padding: 5px 15px 5px 15px;
-  background-color: #23395d;
+  background-color: #1F2C73;
   border-radius: 10px;
   align-self: center;
   width: min-content;
@@ -275,7 +275,7 @@
 }
 .Live-Call .Emotions2 .Details3 {
   grid-row: 2/span 1;
-  background-color:  #1E2D7D;
+  background-color:  #1C1B60;
   border-radius: 15px;
   text-align: center;
   margin-left: 30px;
@@ -290,7 +290,7 @@
 .Live-Call .Emotions {
   grid-column: 5/ span 1;
   grid-row: 1/ span 3;
-  background-color: #1E2D7D;
+  background-color: #1C1B60;
   border-radius: 15px;
   align-items: center;
   justify-content: center;
@@ -304,7 +304,7 @@
   grid-column: 3/ span 3;
   grid-row: 4/ span 2;
   height: 20px;
-  background-color: #1E2D7D;
+  background-color: #1C1B60;
   border-radius: 15px;
   align-items: top;
   justify-content: center;
@@ -396,13 +396,13 @@
 .Call-Logs {
   height: 80vh;
   padding: 5vh;
-  background-color: #152238;
+  background-color: #010048;
 }
 
 .Call-Logs .Nav-Bar {
   width: 100%;
   height: 7vh;
-  background-color: #1c2e4a;
+  background-color: #1C1B60;
   border-radius: 15px;
   text-align: center;
   flex: auto;
@@ -423,19 +423,19 @@
   display: grid;
   grid-template-columns: 2fr 1fr 1.5fr 1fr 1fr 1fr;
   text-align: center;
-  border-bottom: 1px solid #23395d;
+  border-bottom: 1px solid #1F2C73;
 }
 
 .Maps {
   height: 65vh;
   padding: 5vh;
-  background-color: #152238;
+  background-color: #010048;
   
   gap: 20px;
 }
 
 .Maps .Map-Area {
-  background-color: #1c2e4a;
+  background-color: #1C1B60;
   border-radius: 15px;
   align-items: center;
   justify-content: center;
@@ -450,13 +450,13 @@
 
 .Map {
   padding: 10px;
-  background-color: #23395d;
+  background-color: #1F2C73;
 }
 
 .Map-Area .Areawise-Rank {
   height: 75vh;
   grid-column: 2/ span 1;
-  background-color: #23395d;
+  background-color: #1F2C73;
   padding-top: 20px;
   align-items: center;
   justify-content: center;
@@ -478,7 +478,7 @@
 }
 
 .tab-list-active {
-  background-color: #23395d;
+  background-color: #1F2C73;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
@@ -486,7 +486,7 @@
 .RankedCity {
   height: 60px;
   width: 92%;
-  background: #1c2e4a;
+  background: #1C1B60;
   margin: 4%;
   border-radius: 10px;
   text-align: center;
