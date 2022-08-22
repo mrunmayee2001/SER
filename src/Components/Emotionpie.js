@@ -8,26 +8,26 @@ import PieChart from "highcharts-react-official";
 const options = {
     chart: {
       backgroundColor:"#1C1B60" ,
-      width: 400,
-      height: 270,
+      width: 405,
+      height: 285,
       borderRadius: 15,
-      padding: 20,
       type: "pie"
       
     },
     legend: {
-   layout: 'vertical',
-   align: 'left',
-   verticalAlign: 'middle',
-   color:"#000000",
-   itemMarginTop: 5,
-   itemMarginBottom: 5
- },
+      layout: 'vertical',
+      align: 'left',
+      verticalAlign: 'middle',
+      color:"#000000",
+      itemMarginTop: 5,
+      itemMarginBottom: 5
+    },
     title: {
       text: "Caller Emotion",
       style: {
         color:"white",
         fontWeight:"bold",
+        fontFamily:"Roboto"
       },
     },
     credits: {

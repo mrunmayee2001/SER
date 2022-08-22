@@ -8,12 +8,12 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import { GoogleMap, useLoadScript, MarkerF, HeatmapLayer, Circle } from "@react-google-maps/api";
+import { GoogleMap, useLoadScript,Marker, MarkerF, HeatmapLayer, Circle ,InfoWindow} from "@react-google-maps/api";
 const google = window.google;
 
 function LocationMap(props) {
   const [Logs, setCallLogs] = useState([]);
-
+  const [activeMarker, setActiveMarker] = useState(null);
   useEffect(() => {
     async function fetchInfo() {
       const ref = collection(db, "Call-Logs");
@@ -36,16 +36,32 @@ function LocationMap(props) {
 
   const center = { lat: 23.259933, lng: 77.412613 }
   
-  var data = [
+  var data = [ 
+    {
+      id:1,
+      name: "Chicago, Illinois",
+      position: { lat: 23.259940, lng: 77.412620}
+    },
+    {
+      id:2,
+      name: "Chicago, Illinois",
+      position: { lat: 23.259950, lng: 77.412630 }
+    },
+    {
+      id:3,
+      name: "Chicago, Illinois",
+      position: { lat: 23.259960, lng: 77.412640 }
+    },
   ];
   
-  Logs.map((val) => {
-    if(props.emergency==val.Service){
-      console.log(val.Location);
-      //data.concat([val.Location]);
-    }
-  }
-  );
+  // Logs.map((val) => {
+  //   if(props.emergency==val.Service){
+  //     data.push({lat: val.Location.lat, lng: val.Location.lng});
+  //   }
+  // }
+  // );
+  // console.log(data);
+
   const options = {
     strokeColor: '#FF0000',
     strokeOpacity: 0.8,
@@ -60,16 +76,44 @@ function LocationMap(props) {
     zIndex: 1
   }  
   const onLoad = circle => {
-    console.log('Circle onLoad circle: ', circle)
+    console.log('Circle onLoad circle: ', circle);
   }
   const onUnmount = circle => {
     console.log('Circle onUnmount circle: ', circle)
   }
+  
+  const handleOnLoad = (map) => {
+    const bounds = new google.maps.LatLngBounds();
+    data?.forEach(({ position }) => {
+      bounds.extend(position)
+    }
+    );
+    map.fitBounds(bounds);
+  };
+  
+  const handleActiveMarker = (marker) => {
+    if (marker === activeMarker) {
+      return;
+    }
+    setActiveMarker(marker);
+  };
 
+  const radius = 300;
   return (
-    <useLoadScript>
-    <GoogleMap zoom={10} center={center} mapContainerClassName="Maps">
-      <MarkerF position={center} />
+    <GoogleMap zoom={8} center={center} mapContainerClassName="Maps" onLoad={handleOnLoad}>
+      {data.map(({id, name, position }) => (
+        <Marker
+          key={id}
+          position={position}
+          onClick={() => handleActiveMarker(id)}
+        >
+          {activeMarker === id ? (
+            <InfoWindow onCloseClick={() => setActiveMarker(null)}>
+              <div>{name}</div>
+            </InfoWindow>
+          ) : null}
+        </Marker>
+      ))}
       {/* <HeatmapLayer 
         data={data} 
       /> */}
@@ -78,9 +122,9 @@ function LocationMap(props) {
         onUnmount={onUnmount}
         center={center}
         options={options}
+        radius={radius}
       />
     </GoogleMap>
-    </useLoadScript>
   );
 }
 

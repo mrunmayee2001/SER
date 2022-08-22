@@ -10,6 +10,7 @@ import {
 } from "firebase/firestore";
 import Moment from "react-moment";
 import moment from "moment";
+import ReportLogo from '../Assets/report.png';
 
 function CallLogs() {
   const [Logs, setCallLogs] = useState([]);
@@ -50,7 +51,9 @@ function CallLogs() {
               <div className="Person-Name">{val.Name}</div>
               <div className="Call-Status">{moment.utc(val.Duration * 1000).format("HH:mm:ss")}</div>
               <div className="Emotion">{val.Emotion}</div>
-              <div className="Report">Report</div>
+              <a href="https://www.google.co.in/">
+                <img src={ReportLogo} alt="Photo"  className='ReportLogo'/>
+              </a>
             </li>
           );
         })}

@@ -8,6 +8,7 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
+import { render } from "react-dom";
 
 function AreaRanks(props) {
     const [Logs, setCallLogs] = useState([]);
@@ -30,24 +31,21 @@ function AreaRanks(props) {
         if(val.City && val.Service==props.emergency)
         citylist.push(val.City);
     })
-    console.log(citylist);
-    const cityranks = citylist.reduce((acc, e) => acc.set(e, (acc.get(e) || 0) + 1), new Map());
-    console.log(cityranks);
+    const cityranksmap = citylist.reduce((acc, e) => acc.set(e, (acc.get(e) || 0) + 1), new Map());
+    var cityranks = [];
+    cityranksmap.forEach((count, cityname) => {
+        cityranks.push([cityname,count]);
+    }
+    )
 
   return (
     <div>
         <b>{props.emergency} Cases Recorded</b>
-        <div className="RankedCity">
-            <div className="Cityname">CityName</div> 
-            <div className="Cases">Cases</div>
-        </div>
-        
-        {cityranks.forEach((count, cityname) => {
-            console.log(cityname);
+        {cityranks.map((item) => {
             return(
             <div className="RankedCity">
-                <div className="Cityname">{cityname}</div> 
-                <div className="Cases">{count}</div>
+                <div className="Cityname">{item[0]}</div> 
+                <div className="Cases">{item[1]}</div>
             </div>
         )}
         )}

@@ -4,11 +4,27 @@ import fire from '../Assets/fire.png';
 import police from '../Assets/police.png';
 import ambulance from '../Assets/ambulance.png';
 import RescueLogo from '../Assets/rescue-team.png';
-import LocationMap  from './LocationMap.js';
+import CurrentLocation from './CurrentLocation';
 import Emotionpie from './Emotionpie';
-
+import Drunk from '../Assets/Drunk.png';
+import Abusive from '../Assets/Abusive.png';
+import Painful from '../Assets/Painful.png';
+import Stressful from '../Assets/Stressful.png';
 
 function LiveCall() {
+  const CurrentEmotion = 'Drunk';
+  const SubEmotion ='Very Happy'
+  var CurrEmoLogo = Stressful;
+  if(CurrentEmotion=='Drunk'){
+    CurrEmoLogo = Drunk;
+  }
+  else if(CurrentEmotion=='Abusive'){
+    CurrEmoLogo = Abusive;
+  }
+  else if(CurrentEmotion=='Painful'){
+    CurrEmoLogo = Painful;
+  }
+  
   return (
     <div className='Live-Call'>
       <div className='Person'>
@@ -29,15 +45,30 @@ function LiveCall() {
       </div>
       <div className='Emotions2'>
         <div className='Details2'>
-        Current <br></br>Emotion
+        Current Emotion
         </div>
         <div className='Details3'>
-        Angry
+          <div className='Photo'>
+            <img src={CurrEmoLogo} alt="Photo"  className='Photo'/>
+          </div>
+          <div className='Message'>
+            Drunk
+          </div>
+        </div>
+        <div className='Details4'>
+        Sub Emotion
+        </div>
+        <div className='Details5'>
+          <div className='Message'>
+            Drunk
+          </div>
         </div>
       </div>
       <div className='Emotions'><Emotionpie/></div>
      
-      <div className='Location'><LocationMap /></div>
+      <div className='Location'>
+        <CurrentLocation />
+      </div>
       <div className='dispatch'>
       <div className='Rescue-Team'>
         <img src={fire} alt="Photo"  className='Rescue-Logo'/>
