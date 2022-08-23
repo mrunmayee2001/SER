@@ -11,7 +11,8 @@ function CurrentLocation(props) {
     
   if (!isLoaded) return <div>Loading...</div>;
 
-  const center = { lat: 23.259933, lng: 77.412613 }
+  const center = props.center;
+
 
   return (
     <useLoadScript>

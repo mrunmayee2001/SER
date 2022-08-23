@@ -34,7 +34,7 @@ function RecentEmergencies() {
     <div className="Recent-Emergency">
       <ul className="Emergencies">
         {service.map((val) => {
-          if(val.Service=="Ambulance"){
+          if(val.Service && val.Service=="Ambulance"){
             return (
               <div className="ServiceContainer" >
                       <div className="Logo" style={{border:"3px solid #F7FC04", padding:"1vh"}}>
@@ -45,14 +45,14 @@ function RecentEmergencies() {
                       </IconContext.Provider>
                       </div>
                       <div className='ServiceDesc'>
-                        <p>{val.Name}</p>
-                        <p>{val.City} | {moment(val.DateTime.toDate()).fromNow()}</p>
+                        <p>{val.PhoneNo}</p>
+                        <p>{val.City} | {moment(val.StartDateTime.toDate()).fromNow()}</p>
                       </div>
                       
                   </div>
           )
           }
-          else if(val.Service=="Fire"){
+          else if(val.Service && val.Service=="Fire"){
             return (
               <div className="ServiceContainer">
                       <div className="Logo" style={{border:"3px solid #FF0202", padding:"1vh"}}>
@@ -63,14 +63,14 @@ function RecentEmergencies() {
                       </IconContext.Provider>
                       </div>
                       <div className='ServiceDesc'>
-                      <p>{val.Name}</p>
-                        <p>{val.City} | {moment(val.DateTime.toDate()).fromNow()}</p>
+                      <p>{val.PhoneNo}</p>
+                        <p>{val.City} | {moment(val.StartDateTime.toDate()).fromNow()}</p>
                       </div>
                       
                   </div>
           )
           }
-          else{
+          else if(val.Service && val.Service=="Police"){
               return (
               <div className="ServiceContainer">
                       <div className="Logo" style={{border:"3px solid #FF7A00", padding:"1vh"}}>
@@ -81,8 +81,8 @@ function RecentEmergencies() {
                       </IconContext.Provider>
                       </div>
                       <div className='ServiceDesc'>
-                        <p>{val.Name}</p>
-                        <p>{val.City} | {moment(val.DateTime.toDate()).fromNow()}</p>
+                        <p>{val.PhoneNo}</p>
+                        <p>{val.City} | {moment(val.StartDateTime.toDate()).fromNow()}</p>
                       </div>
                       
                   </div>

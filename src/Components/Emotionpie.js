@@ -5,7 +5,9 @@ import Highcharts, { color } from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import PieChart from "highcharts-react-official";
 
-const options = {
+
+function Emotionpie(props) {
+  const options = {
     chart: {
       backgroundColor:"#1C1B60" ,
       width: 405,
@@ -70,25 +72,25 @@ const options = {
           {
             name:"Drunk",
             color:"#ffd29d",
-            y: 10,
+            y: props.DrunkVal,
             sliced: false
           },
           {
             name:"Abusive",
             color:"#a41623",
-            y: 50,
+            y: props.AbusiveVal,
             sliced: false
           },
           {
             name:"Stressful",
             color:"#f85e00",
-            y: 20,
+            y: props.StressfulVal,
             sliced: false
           },
           {
             name:"Painful",
             color:"#ffb563",
-            y: 20,
+            y: props.PainfulVal,
             sliced: false
           }
         ]
@@ -96,10 +98,10 @@ const options = {
     ]
   };
   
-function Emotionpie() {
     return(
     <div>
-    <PieChart highcharts={Highcharts} options={options} />
+      {this.props ?  <PieChart highcharts={Highcharts} options={options} /> : null}
+    {/* <PieChart highcharts={Highcharts} options={options} /> */}
   </div>
     );
     

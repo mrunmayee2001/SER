@@ -32,12 +32,9 @@ function CallLogs() {
   return (
     <div className="Call-Logs">
       <div className="Nav-Bar">
-        {/* <div className="Searchbar">Search</div>
-        <div className="Emotion-Filter">Emotion Filter</div>
-        <div className="City-Filter">City Filter</div> */}
         <div>Date and Time</div>
         <div>City</div>
-        <div>Name</div>
+        <div>Number</div>
         <div>Duration</div>
         <div>Emotion</div>
         <div>Report</div>
@@ -46,12 +43,16 @@ function CallLogs() {
         {Logs.map((val) => {
           return (
             <li className="Log">
-              <div className="DateTime">{val.DateTime.toDate().toDateString()}  {val.DateTime.toDate().toLocaleTimeString("en-US")}</div>
+              <div className="DateTime">{val.StartDateTime.toDate().toDateString()}  {val.StartDateTime.toDate().toLocaleTimeString("en-US")}</div>
               <div className="City">{val.City}</div>
-              <div className="Person-Name">{val.Name}</div>
-              <div className="Call-Status">{moment.utc(val.Duration * 1000).format("HH:mm:ss")}</div>
-              <div className="Emotion">{val.Emotion}</div>
-              <a href="https://www.google.co.in/">
+              <div className="Person-Name">{val.PhoneNo}</div>
+              <div className="Call-Status">
+                {moment.utc(moment(val.EndDateTime.toDate()).diff(val.StartDateTime.toDate(), "second") * 1000).format("HH:mm:ss")}
+              </div>
+              <div className="Emotion">
+                {/* {val.Emotion} */}
+              </div>
+              <a href={val.Transcripts}>
                 <img src={ReportLogo} alt="Photo"  className='ReportLogo'/>
               </a>
             </li>

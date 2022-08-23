@@ -73,8 +73,8 @@ function EmotionGraph() {
     }
   };
   Logs.map((val) => {
-    if(moment(val.DateTime.toDate()).diff(this, 'hours')>-24 && moment(val.DateTime.toDate()).format("HH")<=moment().format("HH")){
-      var timeperiod = Math.round(moment(val.DateTime.toDate()).format("HH")/4);
+    if(moment(val.StartDateTime.toDate()).diff(this, 'hours')>-24 && moment(val.StartDateTime.toDate()).format("HH")<=moment().format("HH")){
+      var timeperiod = Math.round(moment(val.StartDateTime.toDate()).format("HH")/4);
       if(val.Emotion == "Drunk") {
         data['datasets'][0]['data'][timeperiod]++;
       }

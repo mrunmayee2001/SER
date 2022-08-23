@@ -11,7 +11,7 @@ import {
 import { GoogleMap, useLoadScript,Marker, MarkerF, HeatmapLayer, Circle ,InfoWindow} from "@react-google-maps/api";
 const google = window.google;
 
-function LocationMap(props) {
+function LocationMap() {
   const [Logs, setCallLogs] = useState([]);
   const [activeMarker, setActiveMarker] = useState(null);
   useEffect(() => {
@@ -75,33 +75,34 @@ function LocationMap(props) {
     radius: 30000,
     zIndex: 1
   }  
-  const onLoad = circle => {
-    console.log('Circle onLoad circle: ', circle);
-  }
-  const onUnmount = circle => {
-    console.log('Circle onUnmount circle: ', circle)
-  }
   
-  const handleOnLoad = (map) => {
-    const bounds = new google.maps.LatLngBounds();
-    data?.forEach(({ position }) => {
-      bounds.extend(position)
-    }
-    );
-    map.fitBounds(bounds);
-  };
+  // const onLoad = circle => {
+  //   console.log('Circle onLoad circle: ', circle);
+  // }
+  // const onUnmount = circle => {
+  //   console.log('Circle onUnmount circle: ', circle)
+  // }
   
-  const handleActiveMarker = (marker) => {
-    if (marker === activeMarker) {
-      return;
-    }
-    setActiveMarker(marker);
-  };
+  // const handleOnLoad = (map) => {
+  //   const bounds = new google.maps.LatLngBounds();
+  //   data?.forEach(({ position }) => {
+  //     bounds.extend(position)
+  //   }
+  //   );
+  //   map.fitBounds(bounds);
+  // };
+  
+  // const handleActiveMarker = (marker) => {
+  //   if (marker === activeMarker) {
+  //     return;
+  //   }
+  //   setActiveMarker(marker);
+  // };
 
   const radius = 300;
   return (
-    <GoogleMap zoom={8} center={center} mapContainerClassName="Maps" onLoad={handleOnLoad}>
-      {data.map(({id, name, position }) => (
+    <GoogleMap zoom={7} center={center} mapContainerClassName="Maps">
+      {/* {data.map(({id, name, position }) => (
         <Marker
           key={id}
           position={position}
@@ -113,17 +114,17 @@ function LocationMap(props) {
             </InfoWindow>
           ) : null}
         </Marker>
-      ))}
+      ))} */}
       {/* <HeatmapLayer 
         data={data} 
       /> */}
-      <Circle
+      {/* <Circle
         onLoad={onLoad}
         onUnmount={onUnmount}
         center={center}
         options={options}
         radius={radius}
-      />
+      /> */}
     </GoogleMap>
   );
 }
