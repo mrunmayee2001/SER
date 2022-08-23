@@ -1,12 +1,13 @@
-from flask import Flask
+# coding=utf8
+from typing import no_type_check
+from flask import Flask,jsonify
 import librosa
 import numpy as np 
-import torch
-import pyrebase
 import torch
 import torch.nn as nn
 from sklearn.preprocessing import StandardScaler
 import stanza
+import pyrebase
 from indic_transliteration import sanscript
 from indic_transliteration.sanscript import SchemeMap, SCHEMES, transliterate
 import speech_recognition as sr
@@ -15,17 +16,33 @@ from dotenv import load_dotenv
 from time import sleep
 from twilio.rest import Client
 import os
+import datetime
+from keras.models import model_from_json
+import pandas as pd
+import pickle
+from datetime import timezone
 
-config={
-  "apiKey": "AIzaSyBUYUJvjLCR7Qx1aZE8kU5mMitnWfq6oXo",
-  "authDomain": "sih2022-2de5b.firebaseapp.com",
-  "projectId": "sih2022-2de5b",
-  "storageBucket": "sih2022-2de5b.appspot.com",
-  "messagingSenderId": "606919922552",
-  "appId": "1:606919922552:web:5e6ca30ccd8fa8161dae8d",
-  "measurementId": "G-4XSE0V9CR7",
-  "databaseURL": ""
+import firebase_admin
+from firebase_admin import credentials,firestore
+cred=credentials.Certificate('./cred.json')
+firebase_admin.initialize_app(cred)
+database=firestore.client()
+
+
+
+config = {
+  "apiKey": "AIzaSyBk-lVBMqrFFL72IOJ_jQcp9_v8e-xNBZc",
+  "authDomain": "ser-nlp-project.firebaseapp.com",
+  "projectId": "ser-nlp-project",
+  "storageBucket": "ser-nlp-project.appspot.com",
+  "messagingSenderId": "747419408969",
+  "appId": "1:747419408969:web:46c3df7c795ce7a190bd98",
+  "databaseURL":""
 }
+firebase=pyrebase.initialize_app(config)
+storage=firebase.storage()
+
+
 
 load_dotenv()
 account_sid = os.getenv('ACCOUNT_SID')
@@ -33,32 +50,79 @@ auth_token = os.getenv('AUTH_TOKEN')
 to_number = os.getenv('TO_NUMNBER')
 client = Client(account_sid, auth_token)
 
-firebase=pyrebase.initialize_app(config)
-storage=firebase.storage()
 app = Flask(__name__)
+model=pickle.load(open('model1.pkl','rb'))
 
-def getAudioFromFirebase():
-    path_on_cloud="audio/test.wav"
-    storage.child(path_on_cloud).download("audio/test","testAudio.wav") 
+nlp = stanza.Pipeline('hi')
 
-@app.route('/getAudio', methods=['POST','GET'])
-def getAudio():
-    getAudioFromFirebase()
-    return 'hello'
-
-@app.route('/start', methods=['POST','GET'])
-def start():
-    requests.get('')
-    return 'done'
+noOfCalls=1
 
 
+# @app.route('/start', methods=['POST','GET'])
+# def start():
+#     serResults=requests.get('http://127.0.0.1:5000/serModel').json()
+#     return 'done'
 
 
-@app.route('/passAudioToModel', methods=['POST','GET'])
+@app.route('/subEmotion', methods=['POST','GET'])
+def subEmotion():
+    
+
+    Sentiments = { 0 : "Female_angry",
+                    1 : "Female Calm",
+                    2 : "Female Fearful",
+                    3 : "Female Happy",
+                    4 : "Female Sad",
+                    5 : "Male Angry",
+                    6 : "Male calm",
+                    7 : "Male Fearful",
+                    8 : "Male Happy",
+                    9 : "Male sad"}
+        
+    json_file = open('model.json', 'r') #model.json file
+    loaded_model_json = json_file.read()
+    json_file.close()
+    loaded_model = model_from_json(loaded_model_json)
+        # load weights into new model
+    loaded_model.load_weights("Emotion_Voice_Detection_Model.h5") #model
+    print("Loaded model from disk")
+        
+    X, sample_rate = librosa.load(f'.wav', res_type='kaiser_fast',duration=2.5,sr=22050*2,offset=0.5)
+    sample_rate = np.array(sample_rate)
+    mfccs = np.mean(librosa.feature.mfcc(y=X, sr=sample_rate, n_mfcc=13),axis=0)
+    featurelive = mfccs
+    livedf2 = featurelive
+    livedf2= pd.DataFrame(data=livedf2)
+    livedf2 = livedf2.stack().to_frame().T
+    twodim= np.expand_dims(livedf2, axis=2)
+    livepreds = loaded_model.predict(twodim, 
+                                batch_size=32, 
+                                verbose=1)
+    livepreds1=livepreds.argmax(axis=1)
+    liveabc = livepreds1.astype(int).flatten()
+        
+        
+    Result = [emotions for (number,emotions) in Sentiments.items() if liveabc == number]
+    return jsonify({"result":Result[0]})
+
+
+@app.route('/serModel', methods=['POST','GET'])
 def passAudioToModel():
-    file_path='testDrunk.wav'
-    PATH="cnn_transf_parallel_model_1500.pt"
-    SAMPLE_RATE=48000
+    EMOTIONS = {3:'Abusive', 1:'Drunk', 0:'Pain', 2:'Stressful'} 
+    TEST_DATA_PATH = f'trial1.wav'
+    # f'rec{noOfCalls}'
+    SAMPLE_RATE = 48000
+    identifiers = TEST_DATA_PATH
+    emotion = (identifiers)
+
+    mel_spectrograms = []
+    signals = []
+    audio, sample_rate = librosa.load(TEST_DATA_PATH, duration=3, offset=0.5, sr=SAMPLE_RATE)
+    signal = np.zeros((int(SAMPLE_RATE*3,)))
+    signal[:len(audio)] = audio
+    signals.append(signal)
+    signals = np.array(signals)
+
     def getMELspectrogram(audio, sample_rate):
         mel_spec = librosa.feature.melspectrogram(y=audio,
                                                 sr=sample_rate,
@@ -72,117 +136,48 @@ def passAudioToModel():
         mel_spec_db = librosa.power_to_db(mel_spec, ref=np.max)
         return mel_spec_db
 
-
-    audio, sample_rate = librosa.load(file_path, duration=3, offset=0.5,sr=SAMPLE_RATE)
     signal = np.zeros((int(SAMPLE_RATE*3,)))
     signal[:len(audio)] = audio
     mel_spectrogram = getMELspectrogram(signal, SAMPLE_RATE)
-   
+    print('MEL spectrogram shape: ',mel_spectrogram.shape)
+
+
+    single_test = []
+    single_test_mean = []
+    single_test_median=[]
+    single_test_std=[]
+    single_test_var=[]
+
+
+    single_spectrogram = getMELspectrogram(signal, SAMPLE_RATE)
+    mel_np = np.array(single_spectrogram)
+
+    mel_np_mean = np.mean(mel_np)
+    single_test_mean.append(mel_np_mean)
+
+    mel_np_median=np.median(mel_np)
+    single_test_median.append(mel_np_median)
+
+    mel_np_std=np.std(mel_np)
+    single_test_std.append(mel_np_std)
+
+    mel_np_var=np.var(mel_np)
+    single_test_var.append(mel_np_var)
+        
 
     
-    final=[[]]
-    #input=np.stack(mel_spectrogram,axis=0)
-    final[0].append(mel_spectrogram)
-    final=np.array(final)
-    final=np.stack(final,axis=0)
-    print(final.shape)
-    scaler = StandardScaler()
-    final= np.expand_dims(final,1)
-    b,t,c,h,w = final.shape
-    final= np.reshape(final, newshape=(b,-1))
-    final= scaler.fit_transform(final)
-    final = np.reshape(final, newshape=(b,t,c,h,w))
-    input=torch.tensor(final).float()
-    input=torch.squeeze(input,1)
-    print(input.size())
-    model = ParallelModel(4)
-    model.load_state_dict(torch.load(PATH,map_location='cpu'))
-    model.eval()
-    output=model(input)
-    print(output)
-    _, preds  = torch.max(output[0], dim=1)
-    lastAndFinalOutput=preds[0].item()
-    return f'{lastAndFinalOutput}'
-
-    
+    test_df=pd.DataFrame()
+    test_df['mean']=single_test_mean
+    test_df['median']=single_test_median
+    test_df['std']=single_test_std
+    test_df['var']=single_test_var
+    X_test=test_df
+    Y_pred = model.predict(X_test)
+    print("Prediction by KNN",Y_pred)
+    return jsonify({"result":EMOTIONS[Y_pred[0]] })
 
 
 
-class ParallelModel(nn.Module):
-    def __init__(self,num_emotions):
-        super().__init__()
-        # conv block
-        self.conv2Dblock = nn.Sequential(
-            # 1. conv block
-            nn.Conv2d(in_channels=1,
-                       out_channels=16,
-                       kernel_size=3,
-                       stride=1,
-                       padding=1
-                      ),
-            nn.BatchNorm2d(16),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2),
-            nn.Dropout(p=0.3),
-            # 2. conv block
-            nn.Conv2d(in_channels=16,
-                       out_channels=32,
-                       kernel_size=3,
-                       stride=1,
-                       padding=1
-                      ),
-            nn.BatchNorm2d(32),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=4, stride=4),
-            nn.Dropout(p=0.3),
-            # 3. conv block
-            nn.Conv2d(in_channels=32,
-                       out_channels=64,
-                       kernel_size=3,
-                       stride=1,
-                       padding=1
-                      ),
-            nn.BatchNorm2d(64),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=4, stride=4),
-            nn.Dropout(p=0.3),
-            # 4. conv block
-            nn.Conv2d(in_channels=64,
-                       out_channels=64,
-                       kernel_size=3,
-                       stride=1,
-                       padding=1
-                      ),
-            nn.BatchNorm2d(64),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=4, stride=4),
-            nn.Dropout(p=0.3)
-        )
-        # Transformer block
-        self.transf_maxpool = nn.MaxPool2d(kernel_size=[2,4], stride=[2,4])
-        transf_layer = nn.TransformerEncoderLayer(d_model=64, nhead=4, dim_feedforward=512, dropout=0.4, activation='relu')
-        self.transf_encoder = nn.TransformerEncoder(transf_layer, num_layers=4)
-        # Linear softmax layer
-        self.out_linear = nn.Linear(320,num_emotions)
-        self.dropout_linear = nn.Dropout(p=0)
-        self.out_softmax = nn.Softmax(dim=1)
-    def forward(self,x):
-        # conv embedding
-        conv_embedding = self.conv2Dblock(x) #(b,channel,freq,time)
-        conv_embedding = torch.flatten(conv_embedding, start_dim=1) # do not flatten batch dimension
-        # transformer embedding
-        x_reduced = self.transf_maxpool(x)
-        x_reduced = torch.squeeze(x_reduced,1)
-        x_reduced = x_reduced.permute(2,0,1) # requires shape = (time,batch,embedding)
-        transf_out = self.transf_encoder(x_reduced)
-        transf_embedding = torch.mean(transf_out, dim=0)
-        # concatenate
-        complete_embedding = torch.cat([conv_embedding, transf_embedding], dim=1) 
-        # final Linear
-        output_logits = self.out_linear(complete_embedding)
-        output_logits = self.dropout_linear(output_logits)
-        output_softmax = self.out_softmax(output_logits)
-        return output_logits, output_softmax
     
 
     
@@ -193,81 +188,122 @@ class ParallelModel(nn.Module):
 
 @app.route('/nlpModel', methods=['POST','GET'])
 def nlpModel():
-    nlp = stanza.Pipeline('hi')
-    filename = "TestAmb.wav"
+
+    fCount = 0
+    aCount = 0
+    pCount = 0
+    painCount = 0
+    stressCount = 0
+    drunkCount = 0
+    abusiveCount = 0
+    # filename = f"rec{noOfCalls}.wav"
+    filename=f'rec{noOfCalls}.wav'
+    f=open(f"transcripts{noOfCalls}.txt", "a")
     r = sr.Recognizer()
-    with sr.AudioFile(filename) as source:
-        audio_data = r.record(source)
-        data= r.recognize_google(audio_data)
-    doc_data = transliterate(data, sanscript.ITRANS, sanscript.DEVANAGARI)
-    doc=nlp(doc_data)
-    fire = nlp('आग अग्नि रोशनी जलन ज्वाला फायर भट्टी पकाना प्रज्ज्वलित  अग्निशामक फायरमैन ताप ब्रिगदे')
-    for i, sentence in enumerate(fire.sentences):
-        f = [*[f'{token.text}' for token in sentence.tokens]]
+    data=""
+    try:
+        with sr.AudioFile(filename) as source:
+            try:
+                r.adjust_for_ambient_noise(source,duration=1)
+                audio_data = r.record(source)
+                data= r.recognize_google(audio_data)
+                f.write(" "+data)
+            except:
+                print("error")
 
-    ambulance = nlp('अस्पताल ऐम्बुलेंस रोगीवाहन चिकित्सक इलाज डाक्टर परिचारिका उपचारिका नर्स उपचार पोषण अतिदक्षता ईछू Oट् ICU OT')
-    for i, sentence in enumerate(ambulance.sentences):
-        a = [*[f'{token.text}' for token in sentence.tokens]]
+        # doc_data = transliterate(data, sanscript.ITRANS, sanscript.DEVANAGARI)
+        # print(doc_data)
+        r = sr.Recognizer()
+        with sr.AudioFile(filename) as source:
+            try:
+                r.adjust_for_ambient_noise(source,duration=1)
+                audio_data = r.record(source)
+                data= r.recognize_google(audio_data,language='hi-In')
+                print(data)
+            except:
+                print("error")
+    except:
+        print("whileRecording")
 
-    police = nlp('पुलिसविभाग पुलीस रक्षीदल शासन नगररक्षक व्यवस्थापक पुलिसवाला पुलिसकर्मियों पुलिसवाली थाना अनुरक्षक')
-    for i, sentence in enumerate(police.sentences):
-        p = [*[f'{token.text}' for token in sentence.tokens]]
+    if data !="":
+        
+        doc_data=data
+        doc=nlp(doc_data)
+        fire = nlp('आग अग्नि रोशनी जलन ज्वाला फायर भट्टी पकाना प्रज्ज्वलित  अग्निशामक फायरमैन ताप ब्रिगदे smoke ')
+        for i, sentence in enumerate(fire.sentences):
+            f = [*[f'{token.text}' for token in sentence.tokens]]
 
-    pain = nlp('दर्दीला दुःखद  दुखदायी  कष्टसाध्य  क्लेशकर  अप्रीतिकर  दुःखी कष्टजनक  पीड़ा  पीड़ापूर्ण')
-    for i, sentence in enumerate(pain.sentences):
-        painful = [*[f'{token.text}' for token in sentence.tokens]]
+        ambulance = nlp('अस्पताल ऐम्बुलेंस रोगीवाहन चिकित्सक इलाज डाक्टर परिचारिका उपचारिका नर्स उपचार पोषण अतिदक्षता ईछू Oट् ICU OT blood unconscious ')
+        for i, sentence in enumerate(ambulance.sentences):
+            a = [*[f'{token.text}' for token in sentence.tokens]]
 
-    stress = nlp('तनाव तनावपूर्ण थकानेवाला जोर  दबाव  खिंचाव  प्रतिबल  बलाघात चिन्ता')
-    for i, sentence in enumerate(stress.sentences):
-        stressful = [*[f'{token.text}' for token in sentence.tokens]]
+        police = nlp('पुलिसविभाग पुलीस रक्षीदल शासन नगररक्षक व्यवस्थापक पुलिसवाला पुलिसकर्मियों पुलिसवाली थाना अनुरक्षक robbery steal accident ')
+        for i, sentence in enumerate(police.sentences):
+            p = [*[f'{token.text}' for token in sentence.tokens]]
 
-    drunk = nlp('शराबी पियक्कड़ मदहोश नशा नशे शराब मद्य शीशी')
-    for i, sentence in enumerate(drunk.sentences):
-        d = [*[f'{token.text}' for token in sentence.tokens]]
+        pain = nlp('दर्दीला दुःखद  दुखदायी  कष्टसाध्य  क्लेशकर  अप्रीतिकर  दुःखी कष्टजनक  पीड़ा  पीड़ापूर्ण अंगमर्ष आफ़त चोट मुसीबत वेदना सताना')
+        for i, sentence in enumerate(pain.sentences):
+            painful = [*[f'{token.text}' for token in sentence.tokens]]
 
+        stress = nlp('तनाव तनावपूर्ण थकानेवाला जोर  दबाव  खिंचाव  प्रतिबल  बलाघात चिन्ता बेचैन जोर दबाव बलाघात बोझा')
+        for i, sentence in enumerate(stress.sentences):
+            stressful = [*[f'{token.text}' for token in sentence.tokens]]
 
-    for i, sentence in enumerate(doc.sentences):
-        t = [*[f'{token.text}' for token in sentence.tokens]]
+        drunk = nlp('शराबी पियक्कड़ मदहोश नशा नशे शराब मद्य शीशी मदिरा')
+        for i, sentence in enumerate(drunk.sentences):
+            d = [*[f'{token.text}' for token in sentence.tokens]]
 
-    
-    fcheck = any(item in t for item in f)
-    if fcheck:
-        print("fire time")
-    else:
-        pass
+        abusive = nlp('लोडू बाप साले चोदु चोदू चूदु गन्दु गान्दु गन्दू भोसद् भोसद भोसदा भोसदाअ भोसदी भोसदिक भोसदिक् भोसदिकि बोसदिके बक्रिचोद् बलत्कार् बेतिचोद् भय्न्चोद् बेहन्चोद् बेहेन्चोद् भोस्दि भोस्दिके रन्दि चुदसि चुतिअ चुतिय चूतिअ चुतिये चूत् चूतिय गान्द् गान्दु गन्द्मस्ति झतू झन्तु कुकर्चोद् लुन्द् लुह्न्द् लुन्ध् मादर्चोद् मादर् मदर् चोद् मदर्चोद् सुज़ित् भद्व भद्वे चोदिक भोसद्चोद् बुर्सुन्घ चमिन चुद्पगल् हरमि झात् कुथ्रि कुत्ते लव्दे लोदु भदव्य भिकार् बुल्लि चिनाल् चुत् गन्द् मादर्भगत् चोदुभगत् लुन्द्फ़किर् गन्दित् झवद्य लौदु लवद्य मुत्थ रान्दिच्य मदर्चोथ्')
 
-    acheck = any(item in t for item in a)
-    if acheck:
-        print("ambulance")
-    else:
-        pass
-
-    pcheck = any(item in t for item in p)
-    if pcheck:
-        print("police")
-    else:
-        pass
-
-    paincheck = any(item in t for item in painful)
-    if paincheck:
-        print("painful")
-    else:
-        pass
-
-    stresscheck = any(item in t for item in stressful)
-    if stresscheck:
-        print("stressful")
-    else:
-        pass
-    
-    drunkcheck = any(item in t for item in d)
-    if drunkcheck:
-        print("drunk")
-    else:
-        pass
+        for i, sentence in enumerate(abusive.sentences):
+            ab = [*[f'{token.text}' for token in sentence.tokens]]
 
 
-    return str("car")
+        for i, sentence in enumerate(doc.sentences):
+            t = [*[f'{token.text}' for token in sentence.tokens]]
+            fcheck = any(item in t for item in f)
+            if fcheck:
+                fCount+=1
+            else:
+                pass
+            acheck = any(item in t for item in a)
+            if acheck:
+                aCount+=1
+            else:
+                pass
+
+            pcheck = any(item in t for item in p)
+            if pcheck:
+                pCount+=1
+            else:
+                pass
+
+            paincheck = any(item in t for item in painful)
+            if paincheck:
+                painCount+=1
+            else:
+                pass
+
+            stresscheck = any(item in t for item in stressful)
+            if stresscheck:
+                stressCount+=1
+            else:
+                pass
+
+            drunkcheck = any(item in t for item in d)
+            if drunkcheck:
+                drunkCount+=1
+            else:
+                pass
+
+            abusivecheck = any(item in t for item in ab)
+            if abusivecheck:
+                abusiveCount+=1
+            else:
+                pass
+
+    solution = {"Fire": fCount, "Ambulance": aCount, "Police": pCount, "Painful": painCount, "Stressful": stressCount,"Abusive": abusiveCount, "Drunk": drunkCount}
+    return jsonify(solution)
 
 
 
@@ -276,57 +312,126 @@ def nlpModel():
 
 @app.route("/startRecording", methods=['GET','POST'])
 def startRecording():
+    global noOfCalls
+    i=0
+    open(f"transcripts{noOfCalls}.txt", 'w')
     calls = client.calls.list(to=to_number)
     call_sid=calls[0].sid
-
-    i=0
-
+    incomingNo=calls[0].from_formatted
+    dateTime=calls[0].date_created
+    carrierInfo= client.lookups.v1.phone_numbers(incomingNo).fetch(type=['carrier'])
+    ref=database.collection("Call-Logs")
+    newCall=ref.document()
+    latitude=22.578648
+    longitude=88.475746
+    newCall.set({"City":"Kolkata","Service":"","PhoneNo":incomingNo,"StartDateTime":dateTime,"Carrier":carrierInfo.carrier["name"],"Emotion":{},"Latitude":latitude,"Longitude":longitude,"Transcripts":f'/transcripts/transcripts{noOfCalls}'})
     while(True):
-        i=i+1
-        call=client.calls(call_sid).fetch()
-        # if(call.status=="completed"):
-        #     print("done")
-        #     print("done")
-        #     print("done")
-        #     print("done")
-
-        #     break
-        rec_sid=createRec(call_sid)
-        print(rec_sid)
-        sleep(4)
-        # if(call.status=="completed"):
-        #     print("done")
-        #     print("done")
-        #     print("done")
-        #     print("done")
-
-        #     break
-        stopRec(call_sid,rec_sid)
-        sleep(2)
-        fetchRec(rec_sid,i)
+        try:
+            
+            i=i+1
+            rec_sid=createRec(call_sid)
+            sleep(5)
+            stopRec(call_sid,rec_sid)
+            sleep(2)
+            fetchRec(rec_sid,i)
+            nlpData=requests.get('http://127.0.0.1:5000/nlpModel')
+            nlpData.raise_for_status() 
+            nlpResult=nlpData.json()
+            serData=requests.get('http://127.0.0.1:5000/serModel')
+            serData.raise_for_status()
+            serResult=serData.json()
+            # subEmoData=requests.get('http://127.0.0.1:5000/subEmotion')
+            # subEmoData.raise_for_status()
+            # subEmoResult=subEmoData.json()
+            subEmoResult="happy"
+            service={"Fire":nlpResult['Fire'],"Police":nlpResult['Police'],"Ambulance":nlpResult['Ambulance']}
+            del nlpResult['Fire']
+            del nlpResult['Police']
+            del nlpResult['Ambulance']
+            ref=database.collection("Live-Call")
+            newLive=ref.document()
+            latitude=22.578648
+            longitude=88.475746
+            newLive.set({"Service":service,"PhoneNo":incomingNo,"DateTime":dateTime,"Carrier":carrierInfo.carrier["name"],"NlpEmotion":nlpResult,"SerEmotion":serResult,"Latitude":latitude,"Longitude":longitude,"Transcripts":f'/transcripts/transcripts{noOfCalls}'})
+            print("Helloooo  -  ",nlpResult) 
+            os.remove(f'rec{noOfCalls}.wav')
+        except: 
+            print("Completed")
+            docs = database.collection(u'Live-Call').stream()
+            info=[]
+            for doc in docs:
+                info.append(doc.to_dict())
+            abuse=0
+            pain=0
+            stress=0
+            drunk=0    
+            f=0
+            p=0
+            a=0
+            for i in range(len(info)):
+                abuse=abuse+info[i]['NlpEmotion']['Abusive']
+                pain=pain+info[i]['NlpEmotion']['Painful']
+                stress=stress+info[i]['NlpEmotion']['Stressful']
+                drunk=drunk+info[i]['NlpEmotion']['Drunk']
+                f=f+info[i]['Service']['Fire']
+                p=p+info[i]['Service']['Police']
+                a=a+info[i]['Service']['Ambulance']
+            serviceDict={"Fire":f,"Police":p,"Ambulance":a}
+             
+            sum=abuse+stress+drunk+pain
+            if(sum!=0):  
+                abuse=abuse*100/sum
+                pain=pain*100/sum
+                stress=stress*100/sum
+                drunk=drunk*100/sum
+            emotion={"Abusive":abuse,"Painful":pain,"Stressful":stress,"Drunk":drunk}
+            service= max(serviceDict, key= lambda x: serviceDict[x])
+            newCall.update({"EndDateTime":datetime.datetime.now(timezone.utc),"Service":service,"Emotion":emotion})
+            docs = database.collection(u'Live-Call').stream()
+            # for doc in docs:
+            #     doc.reference.delete()
+            uploadTranscriptsInFirebase()
+            break
         
+    noOfCalls=noOfCalls+1    
     return str("Done")
 
 
 
+def uploadTranscriptsInFirebase():
+    try:
+        path_on_cloud=f"transcripts/transcripts{noOfCalls}.txt"
+        path_local=f"transcripts{noOfCalls}.txt"
+        storage.child(path_on_cloud).put(path_local)
+    except:
+        print("uploadTranscriptsInFirebase") 
 
 
 def stopRec(call_sid,rec_sid):
-    client.calls(call_sid).recordings(rec_sid).update(status='stopped')
+    try:
+        client.calls(call_sid).recordings(rec_sid).update(status='stopped')
+    except:
+        print("stopRec")
 
 def createRec(call_sid):
-    recording = client.calls(call_sid).recordings.create()
-    return recording.sid
+    try:
+        recording = client.calls(call_sid).recordings.create()
+        return recording.sid
+    except:
+        print("createRec") 
+
 
 def fetchRec(rec_sid,i):
-    recording = client.recordings(str(rec_sid)).fetch()
-    response=requests.get(recording.media_url)
-    with open(f"rec{i}.mp3", 'wb') as f:
-        f.write(response.content)
-    print(f)
-    path_on_cloud=f"audio/rec{i}.mp3"
-    path_local=f"rec{i}.mp3"
-    storage.child(path_on_cloud).put(path_local) 
+    try:
+        recording = client.recordings(str(rec_sid)).fetch()
+        response=requests.get(recording.media_url)
+        with open(f"rec{noOfCalls}.wav", 'wb') as f:
+            f.write(response.content)
+        path_on_cloud=f"audio/rec{noOfCalls}_{i}.wav"
+        path_local=f"rec{noOfCalls}.wav"
+        storage.child(path_on_cloud).put(path_local)
+    except:
+        print("fetchRec") 
 
 
 

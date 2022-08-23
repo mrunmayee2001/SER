@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+import re
 from time import sleep
 from twilio.rest import Client
 import speech_recognition as sr
@@ -8,7 +9,8 @@ from dotenv import load_dotenv
 import pyrebase
 from flask import Flask
 import requests
-
+import datetime
+# from pydub import AudioSegment
 
 # Setup firebase
 config = {
@@ -37,6 +39,24 @@ client = Client(account_sid, auth_token)
 
 
 app = Flask(__name__)
+
+
+@app.route("/test", methods=['GET','POST'])
+def test():
+    
+    sound1 = AudioSegment.from_wav("testAudio.wav")
+    sound2 = AudioSegment.from_wav("TestAmb.wav")
+    
+
+    # Concatenation is just adding
+    second_half_3_times = sound1+sound2
+
+    # writing mp3 files is a one liner
+    second_half_3_times.export("testAudio.wav", format="wav")
+    return 'done'
+
+
+
 @app.route("/startRecording", methods=['GET','POST'])
 def startRecording():
     calls = client.calls.list(to=to_number)
@@ -91,15 +111,28 @@ def fetchRec(rec_sid,i):
     path_local=f"rec{i}.mp3"
     storage.child(path_on_cloud).put(path_local)  
 
-
+import firebase_admin
+from firebase_admin import credentials,firestore
+cred=credentials.Certificate('./cred.json')
+firebase_admin.initialize_app(cred)
+database=firestore.client()
 
 #createRec('CAad274f3d54a8af7e64a5226b8c4c5b25')
 #stopRec('CAad274f3d54a8af7e64a5226b8c4c5b25','RE08263db8036eb2faa19d9b109651e7d7')
 # fetchRec('RE08263db8036eb2faa19d9b109651e7d7',5)
 
 
+# phone_number = client.lookups \
+#                      .v1 \
+#                      .phone_numbers('+919011357564') \
+#                      .fetch(type=['carrier'])
 
+# print(phone_number.carrier["name"])
 
+# ref=database.collection("Call-Logs")
+# newCall=ref.document().id
+# print(newCall)
+# #ref.document('FiTjtsWM6oleyXPTf9Un').update({u'nlpEmotion': "car",'serEmotion':"dog"})
 
 
 # recording = client.calls('CA203b40dc91bd650c32edac725b47ebfe') \
@@ -116,10 +149,40 @@ def fetchRec(rec_sid,i):
 
 # call = client.calls('CA7a198cde97b35f6da6449f2b80d99130').fetch()
 
+# docs = database.collection(u'Live-Call').stream()
+# info=[]
+# for doc in docs:
+#     info.append(doc.to_dict())
+# abuse=0
+# pain=0
+# stress=0
+# drunk=0    
+# f=0
+# p=0
+# a=0
+# for i in range(len(info)):
+#    abuse=abuse+info[i]['NlpEmotion']['Abusive']
+#    pain=pain+info[i]['NlpEmotion']['Painful']
+#    stress=stress+info[i]['NlpEmotion']['Stressful']
+#    drunk=drunk+info[i]['NlpEmotion']['Drunk']
+#    f=f+info[i]['Service']['Fire']
+#    p=p+info[i]['Service']['Police']
+#    a=a+info[i]['Service']['Ambulance']
+# serviceDict={"Fire":f,"Police":p,"Ambulance":a}   
+# sum=abuse+stress+drunk+pain
+# abuse=abuse*100/sum
+# pain=pain*100/sum
+# stress=stress*100/sum
+# drunk=drunk*100/sum
+# service= max(serviceDict, key= lambda x: serviceDict[x])
+# print(abuse,pain,stress,drunk)
 
-    
+# docs = database.collection(u'Live-Call').stream()
+# for doc in docs:
+#     doc.reference.delete()
 
-
+ct = datetime.datetime.now()
+print(ct)
 
 
 # print(call.from_formatted)
@@ -164,5 +227,5 @@ def fetchRec(rec_sid,i):
 #     print(text)
 
 
-if __name__ == "__main__":
-    app.run()
+# if __name__ == "__main__":
+#     app.run()
