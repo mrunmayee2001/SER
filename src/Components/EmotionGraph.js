@@ -20,9 +20,35 @@ function EmotionGraph() {
 
   useEffect(() => {
     async function fetchInfo() {
-      const ref = collection(db, "Call-Logs");
+      const ref = collection(db, "Call-Logs") ;
+      onSnapshot(ref, (snapshot) => {
+        setCallLogs(snapshot.docs.map(doc => ({
+          Carrier: doc.Carrier,
+          City: doc.City,
+          Emotion: {
+            Drunk: doc.Emotion.Drunk,
+            Abusive: doc.Emotion.Abusive,
+            Painful: doc.Emotion.Painful,
+            Stressful: doc.Emotion.Stressful,
+          },
+          EndDate: doc.EndDate,
+          StartDate: doc.StartDate,
+          Latitude: doc.Latitude,
+          Longitude: doc.Longitude,
+          PhoneNo: doc.PhoneNo,
+          SerEmotion: {
+            result: doc.SerEmotion.result
+          },
+          Service: doc.Service,
+          SubEmotion:{
+            result: doc.SerEmotion.result,
+          },
+          Transcripts: doc.Transcripts
+        })))
+      })
       const info = [];
       const data = await query(getDocs(ref));
+      
       data.forEach((doc) => {
         info.push(doc.data());
       });
@@ -38,53 +64,86 @@ function EmotionGraph() {
         label: "Drunk",
         data: [0,0,0,0,0,0,0],
         fill: true,
-        backgroundColor: "rgba(224, 212, 253, 0.1)",
-        borderColor: "rgb(224, 212, 253)"
+        backgroundColor: "rgba(0, 145, 213, 0.1)",
+        borderColor: "rgb(0, 145, 213)"
       },
       {
         label: "Abusive",
         data: [0,0,0,0,0,0,0],
         fill: true,
-        backgroundColor: "rgba(194,175,240, 0.1)",
-        borderColor: "rgb(194,175,240)"
+        backgroundColor: "rgba(126, 144, 154, 0.1)",
+        borderColor: "rgb(126, 144, 154)"
       },
       {
         label: "Painful",
         data: [0,0,0,0,0,0,0],
         fill: true,
-        backgroundColor: "rgba(176,130,199, 0.1)",
-        borderColor: "rgb(176,130,199)"
+        backgroundColor: "rgba(234, 106, 71, 0.1)",
+        borderColor: "rgb(234, 106, 71)"
       },
       {
         label: "Stressful",
         data: [0,0,0,0,0,0,0],
         fill: true,
-        backgroundColor: "rgba(173,0,255, 0.1)",
-        borderColor: "rgb(173,0,255)"
+        backgroundColor: "rgba(28, 78, 128, 0.1)",
+        borderColor: "rgb(28, 78, 128)"
       }
     ]
   };
   const options= {
-    scales: {
-        y: {
-            min: 0,
-            max: 100
+    plugins: {  // 'legend' now within object 'plugins {}'
+      legend: {
+        labels: {
+          color: "black",  // not 'fontColor:' anymore
+          // fontSize: 18  // not 'fontSize:' anymore
+          font: {
+            size: 15 // 'size' now within object 'font {}'
+          }
         }
+      }
+    },
+    scales: {
+      y: {
+          min: 0,
+          max: 10,
+          display: false,
+      },
+      yAxes: {
+        min: 0,
+        max:10,
+        ticks: {
+          color: "black"
+        },
+        // grid: {
+        //   color:"#6B7380",
+        //   display:false
+        // }
+      },
+      xAxes: {
+        ticks: {
+          color: "black"
+        },
+        // grid: {
+        //   color:"#6B7380",
+        //   display:false
+        // }
+      }
+
     }
   };
   Logs.map((val) => {
     if(moment(val.StartDateTime.toDate()).diff(this, 'hours')>-24 && moment(val.StartDateTime.toDate()).format("HH")<=moment().format("HH")){
       var timeperiod = Math.round(moment(val.StartDateTime.toDate()).format("HH")/4);
-      if(val.Emotion == "Drunk") {
+      if(val.Emotion.Drunk>val.Emotion.Abusive && val.Emotion.Drunk>val.Emotion.Painful && val.Emotion.Drunk>val.Emotion.Painful) {
         data['datasets'][0]['data'][timeperiod]++;
       }
-      else if(val.Emotion == "Abusive"){
+      else if(val.Emotion.Abusive>val.Emotion.Drunk && val.Emotion.Abusive>val.Emotion.Painful && val.Emotion.Abusive>val.Emotion.Painful){
         data['datasets'][1]['data'][timeperiod]++;
       }
-      else if(val.Emotion == "Painful"){
+      else if(val.Emotion.Painful>val.Emotion.Abusive && val.Emotion.Painful>val.Emotion.Drunk && val.Emotion.Painful>val.Emotion.Drunk){
         data['datasets'][2]['data'][timeperiod]++;
       }
-      else if(val.Emotion == "Stressful"){
+      else {
         data['datasets'][3]['data'][timeperiod]++;
       }
       console.log(timeperiod);

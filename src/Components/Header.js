@@ -4,15 +4,15 @@ import mppolice from '../Assets/mp-police.png';
 function Header() {
   const handleClick = () => {
     console.log("button clicked");
-    fetch('http://127.0.0.1:5000/startRecording');
+    fetch('http://192.168.137.179:5000/startRecording');
   };
   return (
     <div className='Header'>
         <img src={mppolice} alt="Logo"  className='mpp-logo'/>
-        <div className='page-title'>Madhya Pradesh Police</div>
+        <div className='page-title'><b>Khaki Mitra</b></div>
         <div>
           <button type="button" className='AnswerCall' onClick={handleClick}>
-            Answer Call
+          <b>Answer Call</b>
           </button>
         </div>
     </div>

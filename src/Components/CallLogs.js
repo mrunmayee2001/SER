@@ -8,7 +8,6 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import { ref, getDownloadURL, uploadBytes} from "firebase/storage";
 import Moment from "react-moment";
 import moment from "moment";
 import ReportLogo from '../Assets/report.png';
@@ -17,7 +16,6 @@ function CallLogs() {
   const [Logs, setCallLogs] = useState([]);
 
   useEffect(() => {
-
     async function fetchInfo() {
       const ref = collection(db, "Call-Logs");
       const info = [];
@@ -29,9 +27,12 @@ function CallLogs() {
     }
     fetchInfo();
   }, []);
+  var FinalEmotion="";
+  
 
   return (
     <div className="Call-Logs">
+      <div className="Log-Area">
       <div className="Nav-Bar">
         <div>Date and Time</div>
         <div>City</div>
@@ -42,28 +43,41 @@ function CallLogs() {
       </div>
       <ul className="Logs-List">
         {Logs.map((val) => {
+          if(val.EndDateTime){
+            if(val.Emotion.Drunk>val.Emotion.Abusive && val.Emotion.Drunk>val.Emotion.Painful && val.Emotion.Drunk>val.Emotion.Painful){
+              FinalEmotion = 'Drunk';
+            }
+            else if(val.Emotion.Abusive>val.Emotion.Drunk && val.Emotion.Abusive>val.Emotion.Painful && val.Emotion.Abusive>val.Emotion.Painful){
+              FinalEmotion = 'Abusive';
+            }
+            else if(val.Emotion.Painful>val.Emotion.Abusive && val.Emotion.Painful>val.Emotion.Drunk && val.Emotion.Painful>val.Emotion.Drunk){
+              FinalEmotion = 'Painful';
+            }
+            else{
+              FinalEmotion= 'Stressful';
+            }
+          }
           return (
             <li className="Log">
               <div className="DateTime">{val.StartDateTime.toDate().toDateString()}  {val.StartDateTime.toDate().toLocaleTimeString("en-US")}</div>
               <div className="City">{val.City}</div>
-              <div className="Person-Name">{val.PhoneNo}</div>
+              <div className="val-Name">{val.PhoneNo}</div>
               <div className="Call-Status">
-                {moment.utc(moment(val.EndDateTime.toDate()).diff(val.StartDateTime.toDate(), "second") * 1000).format("HH:mm:ss")}
+                {val.EndDateTime? moment.utc(moment(val.EndDateTime.toDate()).diff(val.StartDateTime.toDate(), "second") * 1000).format("HH:mm:ss"): 'On Call'}
               </div>
               <div className="Emotion">
-                {/* {val.Emotion} */}
+                {FinalEmotion}
               </div>
               <div>
-                {/* {storage.child('images/stars.jpg').getDownloadURL().then((url) => {
-                  <a href={val.Transcripts}>
-                    <img src={ReportLogo} alt="Photo"  className='ReportLogo'/>
-                  </a>
-                })} */}
+                <a href={val.Transcripts}>
+                  <img src={ReportLogo} alt="Photo"  className='ReportLogo'/>
+                </a>
               </div>
             </li>
           );
         })}
       </ul>
+      </div>
     </div>
   );
 }

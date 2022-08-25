@@ -7,6 +7,7 @@ import PieChart from "highcharts-react-official";
 
 
 function Emotionpie(props) {
+  
   const options = {
     chart: {
       backgroundColor:"#1C1B60" ,

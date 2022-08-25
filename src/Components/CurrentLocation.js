@@ -13,13 +13,10 @@ function CurrentLocation(props) {
 
   const center = props.center;
 
-
   return (
-    <useLoadScript>
-    <GoogleMap zoom={10} center={center} mapContainerClassName="Maps" containerElement={<div style={{ height: '100%' }} />}>
+    <GoogleMap zoom={10} center={center} mapContainerClassName="Maps" containerElement={<div style={{ height: '150' }} />}>
       <MarkerF position={center} />
     </GoogleMap>
-    </useLoadScript>
   );
 }
 

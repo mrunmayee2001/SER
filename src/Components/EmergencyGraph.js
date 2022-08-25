@@ -30,38 +30,71 @@ function EmergencyGraph() {
     fetchInfo();
   }, []);
 
-  const data = {
+  var data = {
     labels: ["Midnight", "Early Morning", "Noon", "Afternoon", "Evening", "Late Evening","Night"],
     datasets: [
       {
         label: "Police",
         data: [0,0,0,0,0,0,0],
         fill: true,
-        backgroundColor: "rgba(255,122,0, 0.1)",
-        borderColor: "rgb(255,122,0)"
+        backgroundColor: "rgba(126, 144, 154, 0.1)",
+        borderColor: "rgb(126, 144, 154)"
       },
       {
         label: "Fire",
         data: [0,0,0,0,0,0,0],
         fill: true,
-        backgroundColor: "rgba(255,2,2, 0.1)",
-        borderColor: "rgb(255,2,2)"
+        backgroundColor: "rgba(234, 106, 71, 0.1)",
+        borderColor: "rgb(234, 106, 71)"
       },
       {
         label: "Ambulance",
         data: [0,0,0,0,0,0,0],
         fill: true,
-        backgroundColor: "rgba(247,252, 4, 0.1)",
-        borderColor: "rgb(247,252, 4)"
+        backgroundColor: "rgba(28, 78, 128, 0.1)",
+        borderColor: "rgb(28, 78, 128)"
       }
     ],
   }
+  
   const options= {
+    plugins: {  // 'legend' now within object 'plugins {}'
+      legend: {
+        labels: {
+          color: "black",  // not 'fontColor:' anymore
+          // fontSize: 18  // not 'fontSize:' anymore
+          font: {
+            size: 15 // 'size' now within object 'font {}'
+          }
+        }
+      }
+    },
     scales: {
         y: {
             min: 0,
-            max: 100,
+            max: 10,
             // suggestedMax:100,
+            display:false,
+        },
+        yAxes: {
+          min: 0,
+          max:10,
+          ticks: {
+            color: "black"
+          },
+          // grid: {
+          //   color:"#6B7380",
+          //   display:false
+          // }
+        },
+        xAxes: {
+          ticks: {
+            color: "black"
+          },
+          // grid: {
+          //   color:"#6B7380",
+          //   display:false
+          // }
         }
     }
   };

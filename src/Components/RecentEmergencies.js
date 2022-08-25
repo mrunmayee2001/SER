@@ -37,8 +37,8 @@ function RecentEmergencies() {
           if(val.Service && val.Service=="Ambulance"){
             return (
               <div className="ServiceContainer" >
-                      <div className="Logo" style={{border:"3px solid #F7FC04", padding:"1vh"}}>
-                      <IconContext.Provider value={{ color: '#F7FC04', size: '6vh'}}>
+                      <div className="Logo" style={{border:"3px solid #1C4E80", padding:"1vh"}}>
+                      <IconContext.Provider value={{ color: '#1C4E80', size: '6vh'}}>
                         <div>
                           <FaAmbulance />
                         </div>
@@ -55,8 +55,8 @@ function RecentEmergencies() {
           else if(val.Service && val.Service=="Fire"){
             return (
               <div className="ServiceContainer">
-                      <div className="Logo" style={{border:"3px solid #FF0202", padding:"1vh"}}>
-                      <IconContext.Provider value={{ color: '#FF0202', size: '6vh'}}>
+                      <div className="Logo" style={{border:"3px solid #EA6A47", padding:"1vh"}}>
+                      <IconContext.Provider value={{ color: '#EA6A47', size: '6vh'}}>
                         <div>
                           <FaFire/>
                         </div>
@@ -73,8 +73,8 @@ function RecentEmergencies() {
           else if(val.Service && val.Service=="Police"){
               return (
               <div className="ServiceContainer">
-                      <div className="Logo" style={{border:"3px solid #FF7A00", padding:"1vh"}}>
-                      <IconContext.Provider value={{ color: '#FF7A00', size: '6vh'}}>
+                      <div className="Logo" style={{border:"3px solid #0091D5", padding:"1vh"}}>
+                      <IconContext.Provider value={{ color: '#0091D5', size: '6vh'}}>
                         <div>
                           <FaUserSecret/>
                         </div>
