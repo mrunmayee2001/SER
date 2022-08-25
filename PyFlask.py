@@ -80,12 +80,11 @@ def subEmotion():
                     8 : "Male Happy",
                     9 : "Male sad"}
         
-    json_file = open('model.json', 'r') #model.json file
+    json_file = open('model.json', 'r')
     loaded_model_json = json_file.read()
     json_file.close()
     loaded_model = model_from_json(loaded_model_json)
-        # load weights into new model
-    loaded_model.load_weights("Emotion_Voice_Detection_Model.h5") #model
+    loaded_model.load_weights("Emotion_Voice_Detection_Model.h5") 
     print("Loaded model from disk")
         
     X, sample_rate = librosa.load(f'rec{noOfCalls}.wav', res_type='kaiser_fast',duration=2.5,sr=22050*2,offset=0.5)
@@ -107,6 +106,33 @@ def subEmotion():
     return jsonify({"result":Result[0]})
 
 
+@app.route('/noiseModel',methods=['POST','GET'])
+def noiseModel():
+    noise={
+        0:'air_conditioner',
+        1:'car_horn',
+        2:'children_playing',
+        3:'dog_bark',
+        4:'drilling',
+        5:'engine_idling',
+        6:'gun_shot',
+        7:'jackHammer',
+        8:'siren',
+        9:'street_music'
+    }
+    json_file = open('noise_model.json', 'r')
+    loaded_model_json = json_file.read()
+    json_file.close()
+    loaded_model = model_from_json(loaded_model_json)
+    loaded_model.load_weights("noise.h5") 
+    print("Loaded model from disk")
+    X, sample_rate = librosa.load('shot.wav', res_type='kaiser_fast')
+    mfccs = np.mean(librosa.feature.melspectrogram(y=X, sr=sample_rate).T,axis=0)
+    t = np.array(tuple(tuple([mfccs])))
+    predict_x=loaded_model.predict(t) 
+    classes_x=np.argmax(predict_x,axis=1)
+    return jsonify({"result":noise[classes_x[0]]})
+
 @app.route('/serModel', methods=['POST','GET'])
 def passAudioToModel():
     try:
@@ -119,7 +145,7 @@ def passAudioToModel():
 
         mel_spectrograms = []
         signals = []
-        audio, sample_rate = librosa.load(TEST_DATA_PATH, duration=3, offset=0.5, sr=SAMPLE_RATE)
+        audio, sample_rate = librosa.load(TEST_DATA_PATH, duration=5, offset=0.5, sr=SAMPLE_RATE)
         signal = np.zeros((int(SAMPLE_RATE*3,)))
         signal[:len(audio)] = audio
         signals.append(signal)
@@ -179,7 +205,7 @@ def passAudioToModel():
         return jsonify({"result":EMOTIONS[Y_pred[0]] })
 
     except:
-        return jsonify({"result":""})
+        return jsonify({"result":"Abusive"})
 
         
 
@@ -318,6 +344,7 @@ def nlpModel():
 
 @app.route("/startRecording", methods=['GET','POST'])
 def startRecording():
+    graph={"Drunk":[0,0],"Abusive":[0,0],"Painful":[0,0],"Stressful":[0,0]}
     global noOfCalls
     i=0
     open(f"transcripts{noOfCalls}.txt", 'w')
@@ -331,7 +358,7 @@ def startRecording():
     latitude=22.578648
     longitude=88.475746
     result={"result":""}
-    newCall.set({"SerEmotion":result,"City":"Kolkata","Service":"","SubEmotion":result,"PhoneNo":incomingNo,"StartDateTime":dateTime,"Carrier":carrierInfo.carrier["name"],"Emotion":{},"Latitude":latitude,"Longitude":longitude,"Transcripts":f'/transcripts/transcripts{noOfCalls}'})
+    newCall.set({"Situation":"","SerEmotion":result,"City":"Kolkata","Service":"","SubEmotion":result,"PhoneNo":incomingNo,"StartDateTime":dateTime,"Carrier":carrierInfo.carrier["name"],"Emotion":{},"Latitude":latitude,"Longitude":longitude,"Transcripts":f'/transcripts/transcripts{noOfCalls}'})
     while(True):
         try:
             
@@ -350,19 +377,33 @@ def startRecording():
             subEmoData=requests.get('http://127.0.0.1:5000/subEmotion')
             subEmoData.raise_for_status()
             subEmoResult=subEmoData.json()
+            situationData=requests.get('http://127.0.0.1:5000/noiseModel')
+            situationData.raise_for_status()
+            situationResult=situationData.json()
             service={"Fire":nlpResult['Fire'],"Police":nlpResult['Police'],"Ambulance":nlpResult['Ambulance']}
             del nlpResult['Fire']
             del nlpResult['Police']
             del nlpResult['Ambulance']
             ref=database.collection("Live-Call")
-            newLive=ref.document()
+            newLive=ref.document(f'live-{i}')
             latitude=22.578648
             longitude=88.475746
-            newLive.set({"Service":service,"PhoneNo":incomingNo,"DateTime":dateTime,"Carrier":carrierInfo.carrier["name"],"NlpEmotion":nlpResult,"SerEmotion":serResult,"SubEmotion":subEmoResult,"Latitude":latitude,"Longitude":longitude,"Transcripts":f'/transcripts/transcripts{noOfCalls}'})
+            
+            # for key in graph:
+            #     if key==serData['result']:
+            #         graph[key]=graph
+
+
+
+
+            
+            newLive.set({"Situation":situationResult,"Service":service,"PhoneNo":incomingNo,"DateTime":dateTime,"Carrier":carrierInfo.carrier["name"],"NlpEmotion":nlpResult,"SerEmotion":serResult,"SubEmotion":subEmoResult,"Latitude":latitude,"Longitude":longitude,"Transcripts":f'/transcripts/transcripts{noOfCalls}'})
             print("Helloooo  -  ",nlpResult) 
             os.remove(f'rec{noOfCalls}.wav')
         except: 
             print("Completed")
+
+            print("error")
             docs = database.collection(u'Live-Call').stream()
             info=[]
             for doc in docs:
@@ -395,12 +436,16 @@ def startRecording():
                         
 
 
-            serviceDict={"Fire":f,"Police":p,"Ambulance":a}
+            serviceDict={"Police":p,"Fire":f,"Ambulance":a}
             NlpDict={"Abusive":NlpAbuse,"Painful":NlpPain,"Stressful":NlpStress,"Drunk":NlpDrunk}
             NlpMax=max(NlpDict, key= lambda x: NlpDict[x])
             SerMax=max(SerDict, key= lambda x: SerDict[x])
             emotion={"Abusive":0,"Painful":0,"Stressful":0,"Drunk":0}
             sum=NlpAbuse+NlpStress+NlpDrunk+NlpPain
+            for key in SerDict:
+                if(key!=SerMax):
+                    NlpDict[key]=NlpDict[key]+SerDict[key]
+
             if(NlpMax==SerMax):
                 emotion[SerMax]=100
             elif(sum==0):
@@ -413,25 +458,19 @@ def startRecording():
                 for key in NlpDict:
                     if(key!=SerMax):
                         emotion[key]=NlpDict[key]*multiplier/sum
-                            
 
-
-
-
-            # sum=abuse+stress+drunk+pain
-            # if(sum!=0):  
-            #     abuse=abuse*100/sum
-            #     pain=pain*100/sum
-            #     stress=stress*100/sum
-            #     drunk=drunk*100/sum
-            # emotion={"Abusive":abuse,"Painful":pain,"Stressful":stress,"Drunk":drunk}
             service= max(serviceDict, key= lambda x: serviceDict[x])
             subEmoResult=max(subEmoDict, key= lambda x: subEmoDict[x],default="Male Fearful")
-            newCall.update({"EndDateTime":datetime.datetime.now(timezone.utc),"Service":service,"Emotion":emotion,"SubEmotion":{"result":subEmoResult}})
+            newCall.update({"Situation":"","EndDateTime":datetime.datetime.now(timezone.utc),"Service":service,"Emotion":emotion,"SubEmotion":{"result":subEmoResult}})
             docs = database.collection(u'Live-Call').stream()
+
             # for doc in docs:
             #     doc.reference.delete()
-            # uploadTranscriptsInFirebase()
+            uploadTranscriptsInFirebase()
+            message = client.messages.create(  
+                                 from_='+12183535790',      
+                              to=incomingNo,
+                              body=f"{service} service is send to ur place") 
             break
         
     noOfCalls=noOfCalls-1  
@@ -473,6 +512,9 @@ def fetchRec(rec_sid,i):
         storage.child(path_on_cloud).put(path_local)
     except:
         print("fetchRec") 
+
+
+
 
 
 
