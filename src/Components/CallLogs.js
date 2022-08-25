@@ -8,6 +8,7 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
+import { ref, getDownloadURL, uploadBytes} from "firebase/storage";
 import Moment from "react-moment";
 import moment from "moment";
 import ReportLogo from '../Assets/report.png';
@@ -52,9 +53,13 @@ function CallLogs() {
               <div className="Emotion">
                 {/* {val.Emotion} */}
               </div>
-              <a href={val.Transcripts}>
-                <img src={ReportLogo} alt="Photo"  className='ReportLogo'/>
-              </a>
+              <div>
+                {/* {storage.child('images/stars.jpg').getDownloadURL().then((url) => {
+                  <a href={val.Transcripts}>
+                    <img src={ReportLogo} alt="Photo"  className='ReportLogo'/>
+                  </a>
+                })} */}
+              </div>
             </li>
           );
         })}

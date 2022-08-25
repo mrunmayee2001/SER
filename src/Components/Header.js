@@ -4,6 +4,7 @@ import mppolice from '../Assets/mp-police.png';
 function Header() {
   const handleClick = () => {
     console.log("button clicked");
+    fetch('http://127.0.0.1:5000/startRecording');
   };
   return (
     <div className='Header'>
