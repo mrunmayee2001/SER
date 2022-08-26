@@ -11,12 +11,27 @@ import CurrentLocation from './CurrentLocation';
 import Highcharts, { color } from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import PieChart from "highcharts-react-official";
-import Popup from 'reactjs-popup';
 import { Line } from "react-chartjs-2";
 import { Chart, registerables } from 'chart.js';
+import Popup from './Popup';
+// import Popup1 from './Popup1';
+// import Popup2 from './Popup2';
 
 
 function LiveCall() {
+  const [isOpen1, setIsOpen1] = useState(false);
+  const togglePopup1 = () => {
+    setIsOpen1(!isOpen1);
+  }
+  const [isOpen2, setIsOpen2] = useState(false);
+  const togglePopup2 = () => {
+    setIsOpen2(!isOpen2);
+  }
+  const [isOpen3, setIsOpen3] = useState(false);
+  const togglePopup3 = () => {
+    setIsOpen3(!isOpen3);
+  }
+
   const [LiveCallDocs, setLiveCallDocs] = useState([]);
   useEffect(() => {
     async function fetchInfo() {
@@ -83,7 +98,8 @@ function LiveCall() {
     },
     SubEmotion: {
       result:"very cool"
-    }
+    },
+    Situation: [],
   }
   var isLiveCall = false;
   if(Logs.length>0){
@@ -94,15 +110,16 @@ function LiveCall() {
   if(LiveCallDocs.length>0){
     isLiveCall=true;
     person= LiveCallDocs[LiveCallDocs.length -1];
-    var Service = 'Fire';
+    var Service = 'Police';
     if( person.Service.Ambulance>  person.Service.Fire &&  person.Service.Ambulance >  person.Service.Police){
       Service= 'Ambulance';
     }
-    else if( person.Service.Police>  person.Service.Fire &&  person.Service.Police >  person.Service.Ambulance){
-      Service= 'Police';
+    else if( person.Service.Fire>  person.Service.Police &&  person.Service.Fire >  person.Service.Ambulance){
+      Service= 'Fire';
     }
     console.log('Fetched from Live call');
   }
+  console.log(person);
   var PersonPhoneNo = person.PhoneNo;
   var Latitude = person.Latitude;
   var Longitude = person.Longitude;
@@ -134,12 +151,11 @@ function LiveCall() {
       FinalEmotion= 'Stressful';
     }
   }
-
   
   const pastlist=[];
   Logs.map((val) => {
-    if(val.PhoneNo==PersonPhoneNo && !pastlist.includes('Drunk')){
-      pastlist.push('Drunk');
+    if(val.PhoneNo==PersonPhoneNo && !pastlist.includes(FinalEmotion)){
+      pastlist.push(FinalEmotion);
     }
   })
   console.log(pastlist);
@@ -235,56 +251,62 @@ function LiveCall() {
     ]
   };
 
-  var data = {
-    labels: [],
-    plugins:{
-      title:{
-        display: true,
-        text: 'Trend Analysis',
+  var analysisdata = {
+    labels: ["0","5","10","20"],
+    options: {
+      plugins: {
+        title: {
+          display: true,
+          text: 'TEST'
+        }
       }
     },
     datasets: [
       {
         label: "Drunk",
-        data: [],
+        data: [1,3,0,1],
         fill: true,
         backgroundColor: "rgba(0, 145, 213, 0.1)",
-        borderColor: "rgb(0, 145, 213)"
+        borderColor: "rgb(0, 145, 213)",
+        lineTension: 0.5,
       },
       {
         label: "Abusive",
-        data: [],
+        data: [0,2,1,1],
         fill: true,
         backgroundColor: "rgba(126, 144, 154, 0.1)",
-        borderColor: "rgb(126, 144, 154)"
+        borderColor: "rgb(126, 144, 154)",
+        lineTension: 0.5,
       },
       {
         label: "Painful",
-        data: [],
+        data: [4,3,6,1],
         fill: true,
         backgroundColor: "rgba(234, 106, 71, 0.1)",
-        borderColor: "rgb(234, 106, 71)"
+        borderColor: "rgb(234, 106, 71)",
+        lineTension: 0.5,
       },
       {
         label: "Stressful",
-        data: [],
+        data: [0,2,4,2],
         fill: true,
         backgroundColor: "rgba(28, 78, 128, 0.1)",
-        borderColor: "rgb(28, 78, 128)"
+        borderColor: "rgb(28, 78, 128)",
+        lineTension: 0.5,
       }
     ]
   };
 
   var AnalisisData = []
   if(isLiveCall){
-    LiveCall.map((val)=>{
+    LiveCallDocs.map((val)=>{
       AnalisisData.push({
         Drunk: 10,
       })
     })
   }
   
-  const options= {
+  const styleoptions= {
     plugins: {  // 'legend' now within object 'plugins {}'
       legend: {
         labels: {
@@ -298,13 +320,11 @@ function LiveCall() {
     },
     scales: {
       y: {
-          min: 0,
-          max: 100,
           display: false,
       },
       yAxes: {
         min: 0,
-        max:100,
+        max:10,
         ticks: {
           color: "black"
         },
@@ -324,6 +344,31 @@ function LiveCall() {
       }
     }
   };
+  function sendFireMessage() {
+    console.log("Fire Brigade on the way");
+    fetch('http://192.168.137.179:5000/FireService');
+    fetch('http://192.168.137.179:5000/sendMessageDispatch');
+  }
+  function sendAmbulanceMessage() {
+    console.log("Ambulance on the way");
+    fetch('http://192.168.137.179:5000/AmbulanceService');
+    fetch('http://192.168.137.179:5000/sendMessageDispatch');
+  }
+  function sendPoliceMessage() {
+    console.log("Police on the way");
+    fetch('http://192.168.137.179:5000/PoliceService');
+    fetch('http://192.168.137.179:5000/sendMessageDispatch');
+  }
+
+  console.log(person.Situation);
+  
+  var sit= " ";
+  if(isLiveCall){
+    sit=person.Situation.result;
+  }
+  else if(person.Situation.length>0){
+    sit=person.Situation[person.Situation.length-1].result;
+  }
   return (
     <div className='Live-Call'>
       <div className='Person'>
@@ -349,7 +394,11 @@ function LiveCall() {
           </div>
         </div>
       </div>
+
+      
+
       <div className='Emotions2'>
+        <b>
         <div className='Details2'>
           Current Emotion
         </div>
@@ -374,18 +423,27 @@ function LiveCall() {
             {SubEmotion}
           </div>
         </div>
+        <div className='Details6'>
+          Situation 
+        </div>
+        <div className='Details7'>
+          <div className='Message'>
+            <div>{sit}</div>
+          </div>
+        </div>
+        </b>
       </div>
       
       <div className='Emotions'>
         {(!isLiveCall&& Object.keys(person.Emotion).length>0) ?
           (<PieChart highcharts={Highcharts} options={piechartoptions} />)
           :
-          null
+          (<div style={{padding:'30px'}}>Loading...</div>)
         }
         
       </div>
       <div className="Call-Analysis">
-        <Line data={data} height="120px" options={options}/>
+        <Line data={analysisdata} height="120px" options={styleoptions}/>
       </div>
       <div className='Location' >
         <CurrentLocation center={CurrLocation}/>
@@ -393,6 +451,48 @@ function LiveCall() {
       
       <div className="reload-button" >
         <button onClick={reload}>Get Recent Results</button>
+      </div>
+
+      <div className='dispatch'>
+        <div className='Rescue-Team'>
+          <button type="button" className='Rescue-Team' onClick={togglePopup1} >
+            <img src={fire} alt="Photo"  className='Rescue-Logo'/>
+          </button>
+          {isOpen1 && <Popup
+            content={<>
+              <b>Confirmation</b>
+              <p>Do you want to send Fire Brigade for help?</p>
+              <button onClick={sendFireMessage}>Test button</button>
+            </>}
+            handleClose={togglePopup1}
+          />}
+        </div>
+        <div className='Ambulance-Team'>
+          <button type="button" className='Police-Team' onClick={togglePopup2} >
+            <img src={police} alt="Photo"  className='Rescue-Logo'/>
+          </button>
+          {isOpen2 && <Popup
+            content={<>
+              <b>Confirmation</b>
+              <p>Do you want to send Ambulance for help?</p>
+              <button onClick={sendAmbulanceMessage}>Send Ambulance</button>
+            </>}
+            handleClose={togglePopup2}
+          />}
+        </div>
+        <div className='Police-Team'>
+          <button type="button" className='Ambulance-Team' onClick={togglePopup3} >
+            <img src={ambulance} alt="Photo"  className='Rescue-Logo'/>
+          </button>
+          {isOpen3 && <Popup
+            content={<>
+              <b>Confirmation</b>
+              <p>Do you want to send Police Team for help?</p>
+              <button onClick={sendPoliceMessage}>Send Police Team</button>
+            </>}
+            handleClose={togglePopup3}
+          />}
+        </div>
       </div>
     </div>
   )

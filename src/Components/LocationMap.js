@@ -8,10 +8,10 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import { GoogleMap, useLoadScript,Marker, MarkerF, HeatmapLayer, Circle ,InfoWindow} from "@react-google-maps/api";
+import { GoogleMap, useLoadScript,Marker, MarkerF, HeatmapLayer, Circle ,InfoWindow, Fragment} from "@react-google-maps/api";
 const google = window.google;
 
-function LocationMap() {
+function LocationMap(props) {
   const [Logs, setCallLogs] = useState([]);
   const [activeMarker, setActiveMarker] = useState(null);
   useEffect(() => {
@@ -34,21 +34,21 @@ function LocationMap() {
     
   if (!isLoaded) return <div>Loading...</div>;
 
-  const center = { lat: 23.259933, lng: 77.412613 }
+  const center = { lat: 22.6759958, lng: 88.3297288 }
   
-  var place = [ 
+  var places = [
     {
-      id:1,
-      name: "Chicago, Illinois",
-      latitude: "23.259940", 
-      longitude: "77.412620",
+      id: 1,
+      name: "Park Slope",
+      latitude: "23.259940",
+      longitude: "77.412630",
       circle: {
-        radius:3000,
+        radius: 3000,
         options: {
           strokeColor: "#ff0000",
         }
       }
-    },
+    }, 
     // {
     //   id:2,
     //   name: "Chicago, Illinois",
@@ -61,13 +61,17 @@ function LocationMap() {
     // },
   ];
   
-  // Logs.map((val) => {
-  //   if(props.emergency==val.Service){
-  //     data.push({lat: val.Location.lat, lng: val.Location.lng});
-  //   }
-  // }
-  // );
-  // console.log(data);
+  
+  var data = [];
+
+  Logs.map((val) => {
+    if(props.emergency==val.Service){
+      console.log(val.Latitude);
+      data.push({lat: val.Latitude, lng: val.Longitude});
+    }
+  }
+  );
+  console.log(data);
 
   // const options = {
   //   strokeColor: '#FF0000',
@@ -99,29 +103,52 @@ function LocationMap() {
   //   map.fitBounds(bounds);
   // };
   
-  // const handleActiveMarker = (marker) => {
-  //   if (marker === activeMarker) {
-  //     return;
-  //   }
-  //   setActiveMarker(marker);
-  // };
+  const handleActiveMarker = (marker) => {
+    if (marker === activeMarker) {
+      return;
+    }
+    setActiveMarker(marker);
+  };
 
   // const radius = 300;
   return (
     <GoogleMap zoom={7} center={center} mapContainerClassName="Maps">
-      {/* {data.map(({id, name, position }) => (
-        <Marker
-          key={id}
-          position={position}
-          onClick={() => handleActiveMarker(id)}
-        >
-          {activeMarker === id ? (
-            <InfoWindow onCloseClick={() => setActiveMarker(null)}>
-              <div>{name}</div>
-            </InfoWindow>
-          ) : null}
-        </Marker>
-      ))} */}
+      <MarkerF position={center} />
+      {places.forEach(place => {
+          return (
+            <React.Fragment key={place.id}>
+              <Marker
+                position={{
+                  lat: parseFloat(place.latitude),
+                  lng: parseFloat(place.longitude)
+                }}
+              />
+              {place.circle && (
+                <Circle
+                  defaultCenter={{
+                    lat: parseFloat(place.latitude),
+                    lng: parseFloat(place.longitude)
+                  }}
+                  radius={place.circle.radius}
+                  options={place.circle.options}
+                />
+              )}
+            </React.Fragment>
+          );
+        })}
+      {places.map((place) => (
+        <Marker position={{lat: place.latitude, lng: place.longitude}} />
+        // <Marker
+        //   key={place.id}
+        //   position={{lat: place.latitude, lng: place.longitude}}
+        //   onClick={() => handleActiveMarker(placeid)}
+        // >
+          
+        //     <InfoWindow onCloseClick={() => setActiveMarker(null)}>
+        //       <div>{place.name}</div>
+        //     </InfoWindow>
+        // </Marker>
+      ))}
       {/* <HeatmapLayer 
         data={data} 
       /> */}

@@ -11,6 +11,8 @@ import {
 import Moment from "react-moment";
 import moment from "moment";
 import ReportLogo from '../Assets/report.png';
+import ClosedLogo from '../Assets/closed.png';
+import OpenLogo from '../Assets/open.png';
 
 function CallLogs() {
   const [Logs, setCallLogs] = useState([]);
@@ -34,6 +36,7 @@ function CallLogs() {
     <div className="Call-Logs">
       <div className="Log-Area">
       <div className="Nav-Bar">
+        <div></div>
         <div>Date and Time</div>
         <div>City</div>
         <div>Number</div>
@@ -59,6 +62,8 @@ function CallLogs() {
           }
           return (
             <li className="Log">
+              <div >{val.EndDateTime? (val.Status=='Closed'? <img src={ClosedLogo} className="Log-Status"></img>: <img src={OpenLogo} className="Log-Status"></img>): null}
+              </div>
               <div className="DateTime">{val.StartDateTime.toDate().toDateString()}  {val.StartDateTime.toDate().toLocaleTimeString("en-US")}</div>
               <div className="City">{val.City}</div>
               <div className="val-Name">{val.PhoneNo}</div>

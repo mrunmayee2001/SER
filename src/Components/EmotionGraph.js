@@ -58,35 +58,39 @@ function EmotionGraph() {
   }, []);
 
   var data = {
-    labels: ["Midnight", "Early Morning", "Noon", "Afternoon", "Evening", "Late Evening","Night"],
+    labels: ["Midnight", "Early Morning", "Morning", "Afternoon", "Evening", "Late Evening","Night"],
     datasets: [
       {
         label: "Drunk",
         data: [0,0,0,0,0,0,0],
         fill: true,
         backgroundColor: "rgba(0, 145, 213, 0.1)",
-        borderColor: "rgb(0, 145, 213)"
+        borderColor: "rgb(0, 145, 213)",
+        lineTension: 0.5,
       },
       {
         label: "Abusive",
         data: [0,0,0,0,0,0,0],
         fill: true,
         backgroundColor: "rgba(126, 144, 154, 0.1)",
-        borderColor: "rgb(126, 144, 154)"
+        borderColor: "rgb(126, 144, 154)",
+        lineTension: 0.5,
       },
       {
         label: "Painful",
         data: [0,0,0,0,0,0,0],
         fill: true,
         backgroundColor: "rgba(234, 106, 71, 0.1)",
-        borderColor: "rgb(234, 106, 71)"
+        borderColor: "rgb(234, 106, 71)",
+        lineTension: 0.5,
       },
       {
         label: "Stressful",
         data: [0,0,0,0,0,0,0],
         fill: true,
         backgroundColor: "rgba(28, 78, 128, 0.1)",
-        borderColor: "rgb(28, 78, 128)"
+        borderColor: "rgb(28, 78, 128)",
+        lineTension: 0.5,
       }
     ]
   };
