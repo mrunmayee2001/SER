@@ -58,13 +58,56 @@ model=pickle.load(open('model1.pkl','rb'))
 
 nlp = stanza.Pipeline('hi')
 
-noOfCalls=9999
+noOfCalls=9987
+
+
+
+
+
+@app.route('/sendMessageDispatch', methods=['POST','GET'])
+def sendMesaageDispatch():
+    message = client.messages.create(  
+                                from_='+12183535790',      
+                              to='+918097467291',
+                              body=f'This person is need of urgent help. Caller No -8097467291 . Location - [22.578648,88.475746]') 
+    return 'done'
 
 
 # @app.route('/start', methods=['POST','GET'])
 # def start():
 #     serResults=requests.get('http://127.0.0.1:5000/serModel').json()
 #     return 'done'
+
+
+
+@app.route('/FireService', methods=['POST','GET'])
+def FireService():
+    message = client.messages.create(  
+                                 from_='+12183535790',      
+                              to='+919011357564',
+                              body="Fire service is on its way. Feedback Form - https://forms.gle/v84uQDDKtZsksjKk6") 
+    return 'ok'
+    
+@app.route('/AmbulanceService', methods=['POST','GET'])
+def AmbulanceService():
+    message = client.messages.create(  
+                                 from_='+12183535790',      
+                              to='+919011357564',
+                              body="Ambulance service is on its way. Feedback Form - https://forms.gle/v84uQDDKtZsksjKk6") 
+    return 'ok'
+
+@app.route('/PoliceService', methods=['POST','GET'])
+def PoliceService():
+    message = client.messages.create(  
+                                 from_='+12183535790',      
+                              to='+919011357564',
+                              body="Police service is on its way. Feedback Form - https://forms.gle/v84uQDDKtZsksjKk6") 
+
+    return 'ok'
+
+
+
+
 
 
 @app.route('/subEmotion', methods=['POST','GET'])
@@ -126,7 +169,7 @@ def noiseModel():
     loaded_model = model_from_json(loaded_model_json)
     loaded_model.load_weights("noise.h5") 
     print("Loaded model from disk")
-    X, sample_rate = librosa.load('shot.wav', res_type='kaiser_fast')
+    X, sample_rate = librosa.load(f'rec{noOfCalls}.wav', res_type='kaiser_fast')
     mfccs = np.mean(librosa.feature.melspectrogram(y=X, sr=sample_rate).T,axis=0)
     t = np.array(tuple(tuple([mfccs])))
     predict_x=loaded_model.predict(t) 
@@ -138,14 +181,14 @@ def passAudioToModel():
     try:
         EMOTIONS = {3:'Abusive', 1:'Drunk', 0:'Painful', 2:'Stressful'} 
         TEST_DATA_PATH = f'rec{noOfCalls}.wav'
-        # f'rec{noOfCalls}'
+        TEST_DATA_PATH = 'data\Pain-3.wav'
         SAMPLE_RATE = 48000
         identifiers = TEST_DATA_PATH
         emotion = (identifiers)
 
         mel_spectrograms = []
         signals = []
-        audio, sample_rate = librosa.load(TEST_DATA_PATH, duration=5, offset=0.5, sr=SAMPLE_RATE)
+        audio, sample_rate = librosa.load(TEST_DATA_PATH, duration=3, offset=0.5, sr=SAMPLE_RATE)
         signal = np.zeros((int(SAMPLE_RATE*3,)))
         signal[:len(audio)] = audio
         signals.append(signal)
@@ -204,7 +247,9 @@ def passAudioToModel():
         print("Prediction by KNN",Y_pred)
         return jsonify({"result":EMOTIONS[Y_pred[0]] })
 
-    except:
+    except Exception as e:
+        print(e)
+        print("Ser model eroor")
         return jsonify({"result":"Abusive"})
 
         
@@ -273,7 +318,7 @@ def nlpModel():
         for i, sentence in enumerate(police.sentences):
             p = [*[f'{token.text}' for token in sentence.tokens]]
 
-        pain = nlp('दर्दीला दुःखद  दुखदायी  कष्टसाध्य  क्लेशकर  अप्रीतिकर  दुःखी कष्टजनक  पीड़ा  पीड़ापूर्ण अंगमर्ष आफ़त चोट मुसीबत वेदना सताना')
+        pain = nlp('अकरास अर्राब उकरीध उधिन कल्हरब कलपडाह चिल्हार दर्दीला दुःखद  दुखदायी  कष्टसाध्य  क्लेशकर  अप्रीतिकर  दुःखी कष्टजनक  पीड़ा  पीड़ापूर्ण अंगमर्ष आफ़त चोट मुसीबत वेदना सताना')
         for i, sentence in enumerate(pain.sentences):
             painful = [*[f'{token.text}' for token in sentence.tokens]]
 
@@ -285,7 +330,7 @@ def nlpModel():
         for i, sentence in enumerate(drunk.sentences):
             d = [*[f'{token.text}' for token in sentence.tokens]]
 
-        abusive = nlp('लोडू बाप साले चोदु चोदू चूदु गन्दु गान्दु गन्दू भोसद् भोसद भोसदा भोसदाअ भोसदी भोसदिक भोसदिक् भोसदिकि बोसदिके बक्रिचोद् बलत्कार् बेतिचोद् भय्न्चोद् बेहन्चोद् बेहेन्चोद् भोस्दि भोस्दिके रन्दि चुदसि चुतिअ चुतिय चूतिअ चुतिये चूत् चूतिय गान्द् गान्दु गन्द्मस्ति झतू झन्तु कुकर्चोद् लुन्द् लुह्न्द् लुन्ध् मादर्चोद् मादर् मदर् चोद् मदर्चोद् सुज़ित् भद्व भद्वे चोदिक भोसद्चोद् बुर्सुन्घ चमिन चुद्पगल् हरमि झात् कुथ्रि कुत्ते लव्दे लोदु भदव्य भिकार् बुल्लि चिनाल् चुत् गन्द् मादर्भगत् चोदुभगत् लुन्द्फ़किर् गन्दित् झवद्य लौदु लवद्य मुत्थ रान्दिच्य मदर्चोथ्')
+        abusive = nlp('अजार कछलम्पट कुकुरिया कोड़हा खउटहा गरिआउब चोट्टी पिण्डा पारब लोडू बाप साले चोदु चोदू चूदु गन्दु गान्दु गन्दू भोसद् भोसद भोसदा भोसदाअ भोसदी भोसदिक भोसदिक् भोसदिकि बोसदिके बक्रिचोद् बलत्कार् बेतिचोद् भय्न्चोद् बेहन्चोद् बेहेन्चोद् भोस्दि भोस्दिके रन्दि चुदसि चुतिअ चुतिय चूतिअ चुतिये चूत् चूतिय गान्द् गान्दु गन्द्मस्ति झतू झन्तु कुकर्चोद् लुन्द् लुह्न्द् लुन्ध् मादर्चोद् मादर् मदर् चोद् मदर्चोद् सुज़ित् भद्व भद्वे चोदिक भोसद्चोद् बुर्सुन्घ चमिन चुद्पगल् हरमि झात् कुथ्रि कुत्ते लव्दे लोदु भदव्य भिकार् बुल्लि चिनाल् चुत् गन्द् मादर्भगत् चोदुभगत् लुन्द्फ़किर् गन्दित् झवद्य लौदु लवद्य मुत्थ रान्दिच्य मदर्चोथ्')
 
         for i, sentence in enumerate(abusive.sentences):
             ab = [*[f'{token.text}' for token in sentence.tokens]]
@@ -380,6 +425,8 @@ def startRecording():
             situationData=requests.get('http://127.0.0.1:5000/noiseModel')
             situationData.raise_for_status()
             situationResult=situationData.json()
+            print(situationData)
+            print(situationResult)
             service={"Fire":nlpResult['Fire'],"Police":nlpResult['Police'],"Ambulance":nlpResult['Ambulance']}
             del nlpResult['Fire']
             del nlpResult['Police']
@@ -388,19 +435,19 @@ def startRecording():
             newLive=ref.document(f'live-{i}')
             latitude=22.578648
             longitude=88.475746
-            
-            # for key in graph:
-            #     if key==serData['result']:
-            #         graph[key]=graph
-
-
-
 
             
-            newLive.set({"Situation":situationResult,"Service":service,"PhoneNo":incomingNo,"DateTime":dateTime,"Carrier":carrierInfo.carrier["name"],"NlpEmotion":nlpResult,"SerEmotion":serResult,"SubEmotion":subEmoResult,"Latitude":latitude,"Longitude":longitude,"Transcripts":f'/transcripts/transcripts{noOfCalls}'})
+            
+            
+
+
+
+            
+            newLive.set({"Status":"open","Situation":situationResult,"Service":service,"PhoneNo":incomingNo,"DateTime":dateTime,"Carrier":carrierInfo.carrier["name"],"NlpEmotion":nlpResult,"SerEmotion":serResult,"SubEmotion":subEmoResult,"Latitude":latitude,"Longitude":longitude,"Transcripts":f'/transcripts/transcripts{noOfCalls}'})
             print("Helloooo  -  ",nlpResult) 
             os.remove(f'rec{noOfCalls}.wav')
-        except: 
+        except Exception as e: 
+            print(e)
             print("Completed")
 
             print("error")
@@ -416,6 +463,7 @@ def startRecording():
             p=0
             a=0
             subEmoDict=dict()
+            situationList=[]
             SerDict={"Drunk":0,"Abusive":0,"Painful":0,"Stressful":0}
             for i in range(len(info)):
                 NlpAbuse=NlpAbuse+info[i]['NlpEmotion']['Abusive']
@@ -425,6 +473,7 @@ def startRecording():
                 f=f+info[i]['Service']['Fire']
                 p=p+info[i]['Service']['Police']
                 a=a+info[i]['Service']['Ambulance']
+                situationList.append(info[i]["Situation"])
                 subEmotionValue=info[i]['SubEmotion']['result']
                 if(subEmotionValue in subEmoDict):
                     subEmoDict[subEmotionValue]=subEmoDict[subEmotionValue]+1
@@ -458,14 +507,15 @@ def startRecording():
                 for key in NlpDict:
                     if(key!=SerMax):
                         emotion[key]=NlpDict[key]*multiplier/sum
+                
 
             service= max(serviceDict, key= lambda x: serviceDict[x])
             subEmoResult=max(subEmoDict, key= lambda x: subEmoDict[x],default="Male Fearful")
-            newCall.update({"Situation":"","EndDateTime":datetime.datetime.now(timezone.utc),"Service":service,"Emotion":emotion,"SubEmotion":{"result":subEmoResult}})
+            newCall.update({"Situation":situationList,"EndDateTime":datetime.datetime.now(timezone.utc),"Service":service,"Emotion":emotion,"SubEmotion":{"result":subEmoResult}})
             docs = database.collection(u'Live-Call').stream()
 
-            # for doc in docs:
-            #     doc.reference.delete()
+            for doc in docs:
+                doc.reference.delete()
             uploadTranscriptsInFirebase()
             message = client.messages.create(  
                                  from_='+12183535790',      
@@ -475,6 +525,8 @@ def startRecording():
         
     noOfCalls=noOfCalls-1  
     return str("Done")
+
+
 
 
 
